@@ -1,10 +1,42 @@
 import { useState } from 'react';
-import { Button, InputGroup, Input } from 'rsuite';
+import { InputGroup, Input, Notification, toaster } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import './App.scss';
+import axios from 'axios';
 
 function App() {
 	const [keyword, setkeyword] = useState('');
+	const [result, setresult] = useState({});
+
+	const onSearch = (key) => {
+		setresult(undefined);
+
+		if (!key) {
+			return;
+		}
+
+		axios
+			.get('http://tool.chaoxing.zmorg.cn/api/search.php?q=' + key)
+			.then((res) => {
+				const { msg } = res?.data;
+				if (msg?.answer && msg?.question) {
+					setresult(msg);
+				} else {
+					// toaster.clear();
+					toaster.push(<Notification type="warning" header={msg} closable />, {
+						placement: 'topEnd',
+					});
+				}
+				// console.log('成功', res);
+			})
+			.catch((e) => {
+				// console.log('搜题失败', e);
+				// toaster.clear();
+				toaster.push(<Notification type="error" header={e + ''} closable />, {
+					placement: 'topEnd',
+				});
+			});
+	};
 
 	return (
 		<div className="container">
@@ -14,15 +46,29 @@ function App() {
 			<div className="context">
 				<div className="search_box">
 					<InputGroup size="lg">
-						<Input placeholder={'让我看看你遇到什么样的难题了。'} onChange={(value) => setkeyword(value)} />
-						<InputGroup.Button
-							onClick={() => {
-								console.log('点击了');
+						<Input
+							placeholder={'让我看看你遇到什么样的难题了。'}
+							onChange={(value) => setkeyword(value)}
+							onKeyUp={(e) => {
+								if (e.keyCode === 13) {
+									// 响应回车点击事件，立即搜索
+									onSearch(keyword);
+								}
 							}}
-						>
+						/>
+						<InputGroup.Button onClick={() => onSearch(keyword)}>
 							<Search />
 						</InputGroup.Button>
 					</InputGroup>
+
+					{result && (
+						<div className="search_result">
+							<div className="item">
+								<h3 className="problem">{result?.question}</h3>
+								<p className="answer">{result?.answer}</p>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 			<div className="footer">
