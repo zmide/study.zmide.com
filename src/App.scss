@@ -1,0 +1,35 @@
+.container {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+
+	.header {
+		padding-left: 15px;
+		border-bottom: 1px solid #ddd;
+
+		.logo {
+			font-size: 20px;
+		}
+	}
+
+	.context {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.search_box {
+			flex: 1;
+			display: flex;
+			margin: 0 auto;
+			max-width: 800px;
+		}
+	}
+
+	.footer {
+		display: flex;
+		justify-content: center;
+		padding: 15px 0;
+		background: #0001;
+	}
+}
