@@ -6,7 +6,7 @@ import axios from 'axios';
 
 function App() {
 	const [keyword, setkeyword] = useState('');
-	const [result, setresult] = useState({});
+	const [result, setresult] = useState();
 
 	const onSearch = (key) => {
 		setresult(undefined);
