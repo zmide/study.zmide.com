@@ -16,7 +16,7 @@ function App() {
 		}
 
 		axios
-			.get('http://tool.chaoxing.zmorg.cn/api/search.php?q=' + key)
+			.get('//tool.chaoxing.zmorg.cn/api/search.php?q=' + key)
 			.then((res) => {
 				const { msg } = res?.data;
 				if (msg?.answer && msg?.question) {
