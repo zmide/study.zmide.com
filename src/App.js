@@ -12,7 +12,7 @@ function App() {
 	useAckee(
 		'/',
 		{
-			server: 'http://tongji.zmide.com',
+			server: '//tongji.zmide.com',
 			domainId: 'ae768a4b-3b79-4bc9-b2d8-b14b6c4e20ee',
 		},
 		{
