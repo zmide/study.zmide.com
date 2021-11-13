@@ -15,6 +15,7 @@
     "rsuite": "^5.0.2",
     "sass": "^1.43.2",
     "sass-loader": "^12.2.0",
+    "use-ackee": "^3.0.0",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

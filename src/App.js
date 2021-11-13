@@ -1,12 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { InputGroup, Input, Notification, toaster } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import './App.scss';
 import axios from 'axios';
+import useAckee from 'use-ackee';
 
 function App() {
 	const [keyword, setkeyword] = useState('');
 	const [result, setresult] = useState();
+
+	useAckee(
+		'/',
+		{
+			server: 'http://tongji.zmide.com',
+			domainId: 'ae768a4b-3b79-4bc9-b2d8-b14b6c4e20ee',
+		},
+		{
+			detailed: false,
+			ignoreLocalhost: true,
+			ignoreOwnVisits: true,
+		}
+	);
 
 	const onSearch = (key) => {
 		setresult(undefined);
