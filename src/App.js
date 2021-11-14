@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { InputGroup, Input, Notification, toaster } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import './App.scss';
