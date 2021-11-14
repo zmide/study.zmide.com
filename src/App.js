@@ -64,7 +64,7 @@ function App() {
 							placeholder={'让我看看你遇到什么样的难题了。'}
 							onChange={(value) => setkeyword(value)}
 							onKeyUp={(e) => {
-								if (e.keyCode === 13) {
+								if (e.key.match("Enter")) {
 									// 响应回车点击事件，立即搜索
 									onSearch(keyword);
 								}
