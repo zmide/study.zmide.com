@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { InputGroup, Input, Notification, toaster } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import './App.scss';
@@ -22,15 +22,18 @@ function App() {
 		}
 	);
 
-	const onSearch = (key) => {
+	const onSearch = () => {
 		setresult(undefined);
 
-		if (!key) {
+		if (keyword.length === 0) {
+			toaster.push(<Notification type="warning" header={"你还没说要查啥题目呢！"} closable />, {
+				placement: 'topEnd',
+			});
 			return;
 		}
 
 		axios
-			.get('//tool.chaoxing.zmorg.cn/api/search.php?q=' + key)
+			.get('//tool.chaoxing.zmorg.cn/api/search.php?q=' + keyword)
 			.then((res) => {
 				const { msg } = res?.data;
 				if (msg?.answer && msg?.question) {
@@ -64,13 +67,13 @@ function App() {
 							placeholder={'让我看看你遇到什么样的难题了。'}
 							onChange={(value) => setkeyword(value)}
 							onKeyUp={(e) => {
-								if (e.keyCode === 13) {
+								if (e.key.match("Enter")) {
 									// 响应回车点击事件，立即搜索
-									onSearch(keyword);
+									onSearch();
 								}
 							}}
 						/>
-						<InputGroup.Button onClick={() => onSearch(keyword)}>
+						<InputGroup.Button onClick={() => onSearch()}>
 							<Search />
 						</InputGroup.Button>
 					</InputGroup>
