@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { InputGroup, Input, Notification, toaster } from 'rsuite';
 import { Search } from '@rsuite/icons';
-import './App.scss';
+import './scss/App.scss';
 import axios from 'axios';
 import useAckee from 'use-ackee';
 
 function App() {
 	const [keyword, setkeyword] = useState('');
-	const [result, setresult] = useState();
+	const [result, setresult] = useState<any>();
 
 	useAckee(
 		'/',
@@ -26,7 +26,7 @@ function App() {
 		setresult(undefined);
 
 		if (keyword.length === 0) {
-			toaster.push(<Notification type="warning" header={"你还没说要查啥题目呢！"} closable />, {
+			toaster.push(<Notification type="warning" header={'你还没说要查啥题目呢！'} closable />, {
 				placement: 'topEnd',
 			});
 			return;
@@ -34,7 +34,7 @@ function App() {
 
 		axios
 			.get('//tool.chaoxing.zmorg.cn/api/search.php?q=' + keyword)
-			.then((res) => {
+			.then((res: any) => {
 				const { msg } = res?.data;
 				if (msg?.answer && msg?.question) {
 					setresult(msg);
@@ -65,9 +65,9 @@ function App() {
 					<InputGroup size="lg">
 						<Input
 							placeholder={'让我看看你遇到什么样的难题了。'}
-							onChange={(value) => setkeyword(value)}
+							onChange={(value: any) => setkeyword(value)}
 							onKeyUp={(e) => {
-								if (e.key.match("Enter")) {
+								if (e.key.match('Enter')) {
 									// 响应回车点击事件，立即搜索
 									onSearch();
 								}
