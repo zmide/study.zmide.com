@@ -4,4 +4,5 @@
  * @FilePath: /so.jszkk.com/src/components/index.ts
  */
 
-export { }
+export { default as AppFooter } from './AppFooter';
+export { default as AppHead } from './AppHead';
