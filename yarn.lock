@@ -1172,7 +1172,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.16.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.16.0", "@babel/runtime@^7.16.3", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
   version "7.16.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.3.tgz#b86f0db02a04187a3c17caa77de69840165d42d5"
   integrity sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==
@@ -1818,13 +1818,6 @@
   version "4.2.22"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.2.22.tgz#47020d7e4cf19194d43b5202f35f75bd2ad35ce7"
   integrity sha512-tFfcE+DSTzWAgifkjik9AySNqIyNoYwmR+uecPwwD/XRNfvOjmC/FjCxpiUGDkDVDphPfCUecSQVFw+lN3M3kQ==
-
-"@types/classnames@^2.2.8":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.3.1.tgz#3c2467aa0f1a93f1f021e3b9bcf938bd5dfdc0dd"
-  integrity sha512-zeOWb0JGBoVmlQoznvqXbE0tEC/HONsnoUNH19Hc96NFsTAwTXbTqb8FMYkru1F/iqp7a18Ws3nWJvtA1sHD1A==
-  dependencies:
-    classnames "*"
 
 "@types/eslint@^7.28.2":
   version "7.28.2"
@@ -3468,7 +3461,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@*, classnames@>=2.0.0, classnames@^2.2.5:
+classnames@^2.2.5, classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -4372,10 +4365,12 @@ dom-helpers@^5.1.3:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
 
-dom-lib@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/dom-lib/-/dom-lib-2.0.3.tgz#b5da5a6b515dacdd688a4320b8d88f066b2e610d"
-  integrity sha512-TYmQ2gC8PoH+4Y8UYapUYS5nudb7kWtX90OcfOlKnjIwzXlSTweeDrVmFYNyNA9IFCaagxwRNkmKtLwWxknptQ==
+dom-lib@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/dom-lib/-/dom-lib-3.0.0.tgz#4748469a4d4a76461f245bb5a3fc8422cf698851"
+  integrity sha512-3US7OyceYve90NSU4MhuE0lK4a7aB1hbb14h45v3CPV/ZolLoEOeuPrdS/A0L8kLnwgVCDiKwlPy/Ajq0u9vfA==
+  dependencies:
+    "@babel/runtime" "^7.16.0"
 
 dom-serializer@0:
   version "0.2.2"
@@ -9141,7 +9136,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.6, prop-types@^15.7.2:
+prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -9456,13 +9451,6 @@ react-scripts@4.0.3:
     workbox-webpack-plugin "5.1.4"
   optionalDependencies:
     fsevents "^2.1.3"
-
-react-text-mask@^5.4.3:
-  version "5.4.3"
-  resolved "https://registry.yarnpkg.com/react-text-mask/-/react-text-mask-5.4.3.tgz#991efb4299e30c2e6c2c46d13f617169463e0d2d"
-  integrity sha1-mR77QpnjDC5sLEbRP2FxaUY+DS0=
-  dependencies:
-    prop-types "^15.5.6"
 
 react-virtualized@^9.22.3:
   version "9.22.3"
@@ -9855,40 +9843,38 @@ rollup@^1.31.1:
     "@types/node" "*"
     acorn "^7.1.0"
 
-rsuite-table@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/rsuite-table/-/rsuite-table-5.0.1.tgz#83590f59d9d9f575b6d287b990ab142a777830af"
-  integrity sha512-jtAa5o/UU62DG1SOyrR6LaPYX6WPK4s5U3UkQnrFWNfSrpy8umb00Rn2orU3eK+IvL8e7R2a1RM8QGcXIIZThg==
+rsuite-table@^5.0.3:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/rsuite-table/-/rsuite-table-5.1.0.tgz#9d88023c902063a830db0b985c659c4fe623955d"
+  integrity sha512-HsG20TWiRC6gwBnfrNy0068nOV3CO4ipTEhevHrj5PaSjyOofTzTR4pgg6pQgV3t4cg70XaWgitf7BBRCSjFeA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@rsuite/icons" "^1.0.0"
     classnames "^2.2.5"
-    dom-lib "^2.0.3"
+    dom-lib "^3.0.0"
     element-resize-event "^3.0.6"
     lodash "^4.17.21"
 
-rsuite@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-5.0.2.tgz#bae29b3535c9a534c65e8348f9bca0abd2686231"
-  integrity sha512-Bej/2KA4l2MTbwAsHk+8PP7CNbI73Bk8M6EksFy2Rt3Tapv1+eJjqmA95Tt5err3Ulwq8PhBuhzPvL2xeWpiPA==
+rsuite@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/rsuite/-/rsuite-5.2.1.tgz#fc0af9c1af5a7114f0a4abbcf4e0a8b91bac9774"
+  integrity sha512-ebUDg2/west8dJfE4ktmPkk5l2lBTof8kRMK8KbIWDcAajFxYySAuqBN60drvP9rq+eF8EjVr5or6WpX//MflA==
   dependencies:
     "@babel/runtime" "^7.8.4"
     "@rsuite/icons" "^1.0.2"
     "@types/chai" "^4.2.18"
-    "@types/classnames" "^2.2.8"
     "@types/lodash" "^4.14.134"
     "@types/prop-types" "^15.7.1"
     "@types/react-virtualized" "^9.21.11"
-    classnames ">=2.0.0"
+    classnames "^2.3.1"
     date-fns "^2.13.0"
-    dom-lib "^2.0.3"
+    dom-lib "^3.0.0"
     element-resize-event "^3.0.6"
     lodash "^4.17.11"
     prop-types "^15.7.2"
-    react-text-mask "^5.4.3"
     react-virtualized "^9.22.3"
-    rsuite-table "^5.0.0"
-    schema-typed "^2.0.1"
+    rsuite-table "^5.0.3"
+    schema-typed "^2.0.2"
 
 rsvp@^4.8.4:
   version "4.8.5"
@@ -9997,10 +9983,12 @@ scheduler@^0.20.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
 
-schema-typed@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/schema-typed/-/schema-typed-2.0.1.tgz#8e37167de3cce919cffc3d81f93ab3d9ef806181"
-  integrity sha512-9sz07HVMxcHjCQ3jtT0mfGtHcSqcmUmBIf6OcJkWDcrl4wQsIIv3mCn+CE/Xb6+VpFWpnPY3nSFby5VxawHEfQ==
+schema-typed@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/schema-typed/-/schema-typed-2.0.2.tgz#e33acc5d66449d30b417ead9fff4c98e199f7578"
+  integrity sha512-E8GAANjZ8oYwyQJEyf/93W1QERTCwu8N7aMUbgBWbYvqzZE8f/kAZaL5D9knr7yLEgMnwJQ4pd8x8EVZ0PpzUA==
+  dependencies:
+    "@babel/runtime" "^7.16.0"
 
 schema-utils@^1.0.0:
   version "1.0.0"

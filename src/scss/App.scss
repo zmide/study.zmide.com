@@ -4,7 +4,10 @@
 	flex-direction: column;
 
 	.header {
-		padding-left: 15px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 0 15px;
 		border-bottom: 1px solid #ddd;
 
 		.logo {
@@ -24,29 +27,28 @@
 			flex-direction: column;
 			margin: 0 auto;
 			max-width: 800px;
-            margin: 0 15px;
+			margin: 0 15px;
 
 			.search_result {
 				flex: 1;
 
 				.item {
 					background: #9991;
-                    border-radius: 10px;
-                    padding: 15px;
-                    margin-top: 35px;
+					border-radius: 10px;
+					padding: 15px;
+					margin-top: 35px;
 
-                    .problem {
-                        font-size: 18px;
-                        margin: 0;
-                        margin-bottom: 5px;
-                        font-weight: 200;
-                    }
+					.problem {
+						font-size: 18px;
+						margin: 0;
+						margin-bottom: 5px;
+						font-weight: 200;
+					}
 
-                    .answer {
-                        font-size: 16px;
-                        color: #000;
-                    }
-
+					.answer {
+						font-size: 16px;
+						color: #000;
+					}
 				}
 			}
 		}
