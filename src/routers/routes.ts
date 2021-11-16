@@ -15,6 +15,7 @@ const routes = [
     {
         path: "/control",
         component: ControlScreen,
+        login: true, // 通过此参数控制页面是否需要登陆
         childs: [
             {
                 path: "statistics",

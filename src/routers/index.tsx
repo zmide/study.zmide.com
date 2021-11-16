@@ -5,6 +5,7 @@
  */
 import { observer } from 'mobx-react';
 import { Router, Route, Routes } from 'react-router-dom';
+import { UserStore } from 'stores';
 
 import routes from './routes';
 
@@ -13,6 +14,10 @@ function Index() {
 		<>
 			<Routes>
 				{routes.map((item: any, indexKey: number) => {
+					if (item?.login && !UserStore?.me) {
+						// 未登陆直接不渲染路由
+						return null;
+					}
 					if (item?.childs) {
 						return (
 							<Route key={indexKey} path={item.path} element={item.component}>
