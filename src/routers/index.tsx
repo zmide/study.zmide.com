@@ -5,7 +5,7 @@
  */
 import { observer } from 'mobx-react';
 import { Router, Route, Routes } from 'react-router-dom';
-import { UserStore } from '../stores';
+
 
 import routes from './routes';
 
@@ -13,10 +13,8 @@ function Index() {
 	return (
 		<>
 			<Routes>
-				{/* <Redirect to="/login" from="/" exact /> */}
-
-				{routes.map((item: any, index: number) => {
-					return <Route key={index} path={item.path} element={item.component} />;
+				{routes.map((item: any, indexKey: number) => {
+					return <Route key={indexKey} path={item.path} element={item.component} />;
 				})}
 			</Routes>
 		</>
