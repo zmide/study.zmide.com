@@ -190,8 +190,8 @@ export default function AppHead() {
 
 				const { data } = res;
 
-				if (data?.errMessage || !data?.success) {
-					// message.error(data?.errMessage || msgTitle + '失败，请稍后重试！');
+				if (data?.code !== 200 || !data?.data) {
+					toaster.push(<Message>{data?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
 				} else {
 					// console.log('成功', data);
 

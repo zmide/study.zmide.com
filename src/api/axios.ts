@@ -11,10 +11,9 @@ import { configure } from "axios-hooks";
 
 const initAxios = () => {
     axios.defaults.baseURL = Config.serverURL || '';
-    axios.defaults.headers.common['Authorization'] = `Bearer ${UserStore.me?.accessToken || ''}`;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${UserStore.me?.access_token || ''}`;
     axios.interceptors.response.use((data: any) => {
-        if (data?.data?.errCode === "401" || data?.data?.errCode === "403") {
-            // 判断用户请求异常，token 非法和失效是 errCode 是 401 无权限访问是 403（操作退出登录）
+        if (data?.data?.code === "401") {
             UserStore.loginOut();
         }
         return data;
