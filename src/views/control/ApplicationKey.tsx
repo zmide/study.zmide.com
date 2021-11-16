@@ -3,15 +3,22 @@
  * @Date: 2021-11-16
  * @FilePath: /so.jszkk.com/src/views/control/ApplicationKey.tsx
  */
+import React, { useState, useEffect } from 'react';
 import { axios } from 'api';
-import React, { useState } from 'react';
-import { Button, Divider, Row, Modal, Form, Message, toaster } from 'rsuite';
+import useAxios from 'axios-hooks';
+import { Button, Divider, Row, Modal, Form, Message, toaster, Panel } from 'rsuite';
 
 export default function ApplicationKey() {
 	const [createAppKeyConfig, setcreateAppKeyConfig] = useState<any>({
 		showModal: false,
 		netLoading: false,
 	});
+
+	const [{ data, loading, error }, refetch] = useAxios({
+		method: 'GET',
+		url: '/api/appsecret/list',
+	});
+
 	const __APIcreateAppKey = (name: string, website: string) => {
 		if (createAppKeyConfig?.netLoading) {
 			return;
@@ -64,6 +71,10 @@ export default function ApplicationKey() {
 			});
 	};
 
+	useEffect(() => {
+		console.log(data);
+	}, [data]);
+
 	return (
 		<div>
 			<div>
@@ -87,6 +98,27 @@ export default function ApplicationKey() {
 			<p style={{ padding: '10px 0' }}>
 				生成的应用密钥可用于调用 <a>全能搜题 API</a> 。
 			</p>
+
+			<div style={{ margin: '20px 0' }}>
+				{data?.data.map((item: any, index: number) => {
+					return (
+						<Panel key={index} style={{ marginBottom: 25, padding: 15 }} bordered>
+							<Row style={{ display: 'flex', flexDirection: 'row' }}>
+								<b style={{ margin: 0 }}>{item?.name}</b>
+								<div style={{ flex: 1 }} />
+								<p style={{ color: '#000' }}>API Token: </p>
+								<p style={{ margin: 0, marginLeft: 10 }}>{item?.api_token}</p>
+							</Row>
+							<Row style={{ display: 'flex', flexDirection: 'row', marginTop: 10 }}>
+								<p style={{ color: '#0006', fontWeight: 100 }}>{item?.app_home}</p>
+								<div style={{ flex: 1 }} />
+								<p style={{ color: '#000' }}>APP Secret: </p>
+								<p style={{ margin: 0, marginLeft: 10, color: '#0004' }}>{item?.app_secret}</p>
+							</Row>
+						</Panel>
+					);
+				})}
+			</div>
 
 			<Modal
 				open={createAppKeyConfig?.showModal}
