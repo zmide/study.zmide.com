@@ -13,6 +13,12 @@
 		.logo {
 			font-size: 20px;
 		}
+
+		.layout {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
 	}
 
 	.context {
@@ -59,5 +65,43 @@
 		justify-content: center;
 		padding: 15px 0;
 		background: #0001;
+	}
+
+	.layout {
+		margin: 0 auto;
+		max-width: 1200px;
+		width: 100%;
+		height: 100%;
+	}
+
+	.control {
+		flex: 1;
+		flex-direction: column;
+		justify-content: unset;
+		align-items: unset;
+
+		.content {
+			display: flex;
+			flex-direction: row;
+			padding: 45px 0;
+			height: 100%;
+
+			.rs-nav-item-active {
+				background: #e5e5ea;
+				font-weight: bold;
+			}
+			.content_app {
+				flex: 1;
+				margin-left: 50px;
+			}
+		}
+
+		.nav_divider {
+			margin: 0;
+		}
+
+		.rs-navbar {
+			background: none;
+		}
 	}
 }

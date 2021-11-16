@@ -5,8 +5,7 @@
  */
 import React from 'react';
 
-import { HomeScreen, ControlScreen, NotFoundScreen } from 'views'
-
+import { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey } from 'views'
 
 const routes = [
     {
@@ -16,6 +15,17 @@ const routes = [
     {
         path: "/control",
         component: ControlScreen,
+        childs: [
+            {
+                path: "statistics",
+                index: false,
+                component: ControlUseStatistics,
+            },
+            {
+                path: "appkeys",
+                component: ApplicationKey,
+            }
+        ]
     },
     {
         path: "*",

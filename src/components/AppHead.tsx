@@ -274,7 +274,9 @@ export default function AppHead() {
 		switch (key) {
 			case 1:
 				// 加载控制台
-				navigate('/control');
+				navigate('/control', {
+					replace: true,
+				});
 				break;
 			case 3:
 				// 用户退出登陆
@@ -292,27 +294,38 @@ export default function AppHead() {
 	return (
 		<>
 			<header className="header">
-				<h1 className="logo">全能搜题</h1>
-				<div style={{ flex: 1 }}></div>
-				<Whisper
-					placement="bottomEnd"
-					trigger="contextMenu"
-					ref={refUserWhisper}
-					speaker={<MenuPopover onSelect={onUserControl} />}
-				>
-					<Avatar
-						circle
+				<div className="layout">
+					<h1
+						className="logo"
 						onClick={() => {
-							if (UserStore.me) {
-								refUserWhisper?.current?.open();
-							} else {
-								setloginDrawer(true);
-							}
+							navigate('/', {
+								replace: true,
+							});
 						}}
 					>
-						U
-					</Avatar>
-				</Whisper>
+						全能搜题
+					</h1>
+					<div style={{ flex: 1 }}></div>
+					<Whisper
+						placement="bottomEnd"
+						trigger="contextMenu"
+						ref={refUserWhisper}
+						speaker={<MenuPopover onSelect={onUserControl} />}
+					>
+						<Avatar
+							circle
+							onClick={() => {
+								if (UserStore.me) {
+									refUserWhisper?.current?.open();
+								} else {
+									setloginDrawer(true);
+								}
+							}}
+						>
+							U
+						</Avatar>
+					</Whisper>
+				</div>
 			</header>
 			<Drawer open={loginDrawer} onClose={() => setloginDrawer(false)}>
 				<Drawer.Body>
