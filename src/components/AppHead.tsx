@@ -3,7 +3,7 @@
  * @Date: 2021-11-15
  * @FilePath: /so.jszkk.com/src/components/AppHead.tsx
  */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, ElementType } from 'react';
 import {
 	Drawer,
 	Placeholder,
@@ -17,12 +17,39 @@ import {
 	toaster,
 	Message,
 	Avatar,
+	Popover,
+	Dropdown,
+	Divider,
 } from 'rsuite';
 import { axios } from 'api';
+import { observe, UserStore } from 'stores';
+import { useNavigate } from 'react-router-dom';
+
+const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {
+	const { me } = UserStore;
+	return (
+		<Popover ref={ref} {...rest} full>
+			<div style={{ padding: 15, paddingBottom: 0 }}>
+				<p>
+					<b>{me?.name}</b> 账号已登陆
+				</p>
+				<p style={{ margin: 0, color: '#0005' }}>{me?.email}</p>
+			</div>
+
+			<Dropdown.Menu onSelect={onSelect}>
+				<Dropdown.Item divider />
+				<Dropdown.Item eventKey={1}>控制中心</Dropdown.Item>
+				<Dropdown.Item eventKey={2}>开发文档</Dropdown.Item>
+				<Dropdown.Item eventKey={3}>退出登陆</Dropdown.Item>
+			</Dropdown.Menu>
+		</Popover>
+	);
+});
 
 export default function AppHead() {
 	const [loginDrawer, setloginDrawer] = useState(false);
 	const [isRegister, setisRegister] = useState(false);
+	const navigate = useNavigate();
 
 	const __tooltip = (msg: string) => <Tooltip>{msg}</Tooltip>;
 
@@ -41,7 +68,7 @@ export default function AppHead() {
 		});
 		const msgTitle = '登陆';
 		const params = {
-			account,
+			email: account,
 			password,
 		};
 
@@ -53,14 +80,17 @@ export default function AppHead() {
 					netLoading: false,
 				});
 
-				const { data } = res;
+				const { data: callback } = res;
 
-				if (data?.code !== 200 || !data?.data) {
-					toaster.push(<Message>{data?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
+				if (callback?.code !== 200 || !callback?.data) {
+					toaster.push(<Message>{callback?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
 				} else {
-					// console.log('成功', data);
+					const { data } = callback;
+					console.log('成功', callback);
 
 					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
+					setloginDrawer(false);
+					UserStore.login(data);
 
 					// 成功，关闭弹窗，刷新列表数据，清空编辑框数据
 					setloginConfig({
@@ -231,14 +261,58 @@ export default function AppHead() {
 		};
 	}, []);
 
+	const refUserWhisper = useRef<any>();
+
+	let operateUserControl = false;
+	const onUserControl = (key: number) => {
+		if (operateUserControl) return;
+		operateUserControl = true;
+
+		// 关闭用户操作选项
+		refUserWhisper?.current?.close();
+
+		switch (key) {
+			case 1:
+				// 加载控制台
+				navigate('/control');
+				break;
+			case 3:
+				// 用户退出登陆
+				setTimeout(() => {
+					UserStore.loginOut();
+				}, 500); // Bin: 这里为啥要延迟呢？因为退出登陆执行太快，动画还没执行完可能会导致用户感觉 UI 卡一下
+				break;
+		}
+
+		setTimeout(() => {
+			operateUserControl = false;
+		}, 500);
+	};
+
 	return (
 		<>
 			<header className="header">
 				<h1 className="logo">全能搜题</h1>
 				<div style={{ flex: 1 }}></div>
-				<Avatar circle onClick={() => setloginDrawer(true)}>
-					U
-				</Avatar>
+				<Whisper
+					placement="bottomEnd"
+					trigger="contextMenu"
+					ref={refUserWhisper}
+					speaker={<MenuPopover onSelect={onUserControl} />}
+				>
+					<Avatar
+						circle
+						onClick={() => {
+							if (UserStore.me) {
+								refUserWhisper?.current?.open();
+							} else {
+								setloginDrawer(true);
+							}
+						}}
+					>
+						U
+					</Avatar>
+				</Whisper>
 			</header>
 			<Drawer open={loginDrawer} onClose={() => setloginDrawer(false)}>
 				<Drawer.Body>
