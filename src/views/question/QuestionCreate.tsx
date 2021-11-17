@@ -20,9 +20,11 @@ import {
 	IconButton,
 	Message,
 	toaster,
+	Modal,
 } from 'rsuite';
 import TrashIcon from '@rsuite/icons/Trash';
 import ExpandOutlineIcon from '@rsuite/icons/ExpandOutline';
+import { axios } from 'api';
 
 // 获取选项序号字符串
 const getSerialStr = (i: number) => {
@@ -219,8 +221,92 @@ export default function QuestionCreate() {
 	const [createConfig, setcreateConfig] = useState<any>({
 		content: '',
 		type: 0,
+		netLoading: false,
 	});
-	const refOptionsData = useRef('');
+	const refOptionsData = useRef<any>('');
+
+	const __APIcreateQuestion = (type: number, content: string, options: string) => {
+		if (createConfig?.netLoading) {
+			return;
+		}
+
+		if (!content || !options) {
+			toaster.push(<Message>题目内容或选项数据不完整。</Message>);
+			return;
+		}
+
+		setcreateConfig({
+			...createConfig,
+			netLoading: true,
+		});
+
+		const msgTitle = '提交题目';
+		const params = {
+			type,
+			content,
+			options,
+		};
+
+		axios
+			.post('/api/question/add', params, {})
+			.then((res: any) => {
+				setcreateConfig({
+					...createConfig,
+					netLoading: false,
+				});
+
+				const { data } = res;
+
+				if (data?.code !== 200 || !data?.data) {
+					toaster.push(<Message>{data?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
+				} else {
+					// console.log('成功', data);
+
+					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
+
+					// 成功，关闭弹窗，刷新列表数据，
+					setcreateConfig({
+						content: '',
+						type: createConfig?.type,
+						netLoading: false,
+					});
+
+					// 清空编辑框数据
+					__emptyCreateConfig();
+				}
+			})
+			.catch((error: any) => {
+				setcreateConfig({
+					...createConfig,
+					netLoading: false,
+				});
+				toaster.push(<Message>{error + '' || msgTitle + '失败，请稍后重试！'}</Message>);
+			});
+	};
+
+	/**
+	 * @description: 清空 CreateConfig 已输入数据
+	 * @param {*}
+	 * @return {*}
+	 */
+	const __emptyCreateConfig = () => {
+		const typeOld = createConfig?.type;
+		setcreateConfig({
+			type: null,
+		});
+		refOptionsData.current = null;
+
+		setTimeout(() => {
+			setcreateConfig({
+				content: '',
+				type: typeOld,
+				netLoading: false,
+			});
+		}, 100);
+	};
+	const [emptyModalConfig, setemptyModalConfig] = useState({
+		showModal: false,
+	});
 
 	/**
 	 * @description: 检查选项数据是否合规，通过返回 null，不合规则返回提示信息
@@ -284,14 +370,25 @@ export default function QuestionCreate() {
 								<h4 style={{ fontWeight: 300 }}>添加题目</h4>
 								<div style={{ flex: 1 }} />
 								<Button
+									style={{ marginRight: 10 }}
+									disabled={refOptionsData.current && createConfig?.content ? false : true}
+									onClick={() => {
+										setemptyModalConfig({
+											showModal: true,
+										});
+									}}
+								>
+									清空数据
+								</Button>
+								<Button
 									appearance="primary"
 									disabled={refOptionsData.current && createConfig?.content ? false : true}
 									onClick={() => {
 										// 题目数据 createConfig
 										// 选项数据 refOptionsData.current
 
-										console.log('题目数据', createConfig);
-										console.log('选项数据', refOptionsData.current);
+										// console.log('题目数据', createConfig);
+										// console.log('选项数据', refOptionsData.current);
 
 										const warningMsg = __checkOptionsCompliance(
 											createConfig?.type,
@@ -301,6 +398,12 @@ export default function QuestionCreate() {
 											toaster.push(<Message>{warningMsg}</Message>);
 											return;
 										}
+
+										__APIcreateQuestion(
+											createConfig?.type,
+											createConfig?.content,
+											refOptionsData.current
+										);
 									}}
 								>
 									确认提交
@@ -353,19 +456,57 @@ export default function QuestionCreate() {
 									<Form.ControlLabel>
 										<b>题目选项</b>
 									</Form.ControlLabel>
-									<div>
-										<OptionView
-											type={createConfig?.type}
-											onChange={(value: string) => {
-												// 选项数据不能直接写入 createConfig ，不然会导致组件刷新死循环
-												refOptionsData.current = value;
-											}}
-										/>
-									</div>
+									{createConfig?.type !== null ? (
+										<div>
+											<OptionView
+												type={createConfig?.type}
+												onChange={(value: string) => {
+													// 选项数据不能直接写入 createConfig ，不然会导致组件刷新死循环
+													refOptionsData.current = value;
+												}}
+											/>
+										</div>
+									) : null}
 								</Form.Group>
 							</Form>
 						</div>
 					</div>
+					<Modal
+						backdrop="static"
+						role="alertdialog"
+						open={emptyModalConfig.showModal}
+						onClose={() =>
+							setemptyModalConfig({
+								showModal: false,
+							})
+						}
+						size="xs"
+					>
+						<Modal.Body>你确定要清空输入的题目数据吗？清空之后需要重新填写全部内容，不可恢复。</Modal.Body>
+						<Modal.Footer>
+							<Button
+								onClick={() =>
+									setemptyModalConfig({
+										showModal: false,
+									})
+								}
+								appearance="subtle"
+							>
+								取消
+							</Button>
+							<Button
+								onClick={() => {
+									__emptyCreateConfig();
+									setemptyModalConfig({
+										showModal: false,
+									});
+								}}
+								appearance="primary"
+							>
+								确定
+							</Button>
+						</Modal.Footer>
+					</Modal>
 				</div>
 			</div>
 			<AppFooter />
