@@ -5,11 +5,12 @@
  */
 import useAxios from 'axios-hooks';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Row, Button, Divider, List, Pagination, Loader } from 'rsuite';
 
 export default function QuestionList() {
-	const [{ data: questionData, loading: questionLoading, error: questionError }, questionRefetch] =
-		useAxios('/api/question/list');
+	const navigate = useNavigate();
+	const [{ data: questionData, loading: questionLoading }, questionRefetch] = useAxios('/api/question/list');
 
 	const [questionList, setquestionList] = useState<any>();
 
@@ -30,7 +31,12 @@ export default function QuestionList() {
 					<Row style={{ display: 'flex', padding: 10 }}>
 						<h4 style={{ fontWeight: 300 }}>题目列表</h4>
 						<div style={{ flex: 1 }} />
-						<Button appearance="primary" onClick={() => {}}>
+						<Button
+							appearance="primary"
+							onClick={() => {
+								navigate('/question/create');
+							}}
+						>
 							提交题目
 						</Button>
 					</Row>
