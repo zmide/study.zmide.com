@@ -43,6 +43,7 @@ export default function Index(props: any) {
 						activeKey={pageKey}
 					>
 						<Nav.Item eventKey="statistics">使用统计</Nav.Item>
+						<Nav.Item eventKey="questions">题目列表</Nav.Item>
 						<Nav.Item eventKey="appkeys">应用密钥</Nav.Item>
 					</Nav>
 

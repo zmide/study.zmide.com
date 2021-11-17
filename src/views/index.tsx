@@ -14,6 +14,7 @@ const ControlView = React.lazy(() => import('./control'));
 const NotFoundView = React.lazy(() => import('./NotFound'));
 const ControlUseStatisticsView = React.lazy(() => import('./control/UseStatistics'));
 const ApplicationKeyView = React.lazy(() => import('./control/ApplicationKey'));
+const QuestionListView = React.lazy(() => import('./control/QuestionList'));
 
 const Suspense = (props: any) => {
 	return (
@@ -38,6 +39,11 @@ const ApplicationKey = (
 		<ApplicationKeyView />
 	</Suspense>
 ); // 控制页面
+const QuestionList = (
+	<Suspense>
+		<QuestionListView />
+	</Suspense>
+); // 控制页面
 
 const NotFoundScreen = (
 	<Suspense>
@@ -45,4 +51,4 @@ const NotFoundScreen = (
 	</Suspense>
 ); // 错误默认页面
 
-export { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey };
+export { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey, QuestionList };
