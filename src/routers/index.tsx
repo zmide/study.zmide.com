@@ -4,7 +4,7 @@
  * @FilePath: /so.jszkk.com/src/routers/index.tsx
  */
 import { observer } from 'mobx-react';
-import { Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { UserStore } from 'stores';
 
 import routes from './routes';

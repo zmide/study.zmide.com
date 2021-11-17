@@ -3,10 +3,9 @@
  * @Date: 2021-11-15
  * @FilePath: /so.jszkk.com/src/components/AppHead.tsx
  */
-import React, { useState, useRef, useEffect, ElementType } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
 	Drawer,
-	Placeholder,
 	Form,
 	ButtonToolbar,
 	Button,
@@ -19,10 +18,9 @@ import {
 	Avatar,
 	Popover,
 	Dropdown,
-	Divider,
 } from 'rsuite';
 import { axios } from 'api';
-import { observe, UserStore } from 'stores';
+import { UserStore } from 'stores';
 import { useNavigate } from 'react-router-dom';
 
 const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {

@@ -3,8 +3,6 @@
  * @Date: 2021-11-15
  * @FilePath: /so.jszkk.com/src/routers/routes.ts
  */
-import React from 'react';
-
 import { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey } from 'views'
 
 const routes = [

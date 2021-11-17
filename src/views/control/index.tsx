@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppHead, AppFooter } from 'components';
-import { Navbar, Nav, Divider, Sidenav } from 'rsuite';
+import { Nav } from 'rsuite';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 export default function Index(props: any) {

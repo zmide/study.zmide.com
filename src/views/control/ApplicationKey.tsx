@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { axios } from 'api';
 import useAxios from 'axios-hooks';
-import { Button, Divider, Row, Modal, Form, Message, toaster, Panel } from 'rsuite';
+import { Button, Divider, Row, Modal, Form, Message, toaster, Panel, Loader } from 'rsuite';
 
 export default function ApplicationKey() {
 	const [createAppKeyConfig, setcreateAppKeyConfig] = useState<any>({
@@ -55,6 +55,8 @@ export default function ApplicationKey() {
 
 					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
 
+					refetch(); // 刷新密钥列表数据
+
 					// 成功，关闭弹窗，刷新列表数据，清空编辑框数据
 					setcreateAppKeyConfig({
 						showModal: false,
@@ -72,7 +74,7 @@ export default function ApplicationKey() {
 	};
 
 	useEffect(() => {
-		console.log(data);
+		// console.log(data);
 	}, [data]);
 
 	return (
@@ -99,26 +101,33 @@ export default function ApplicationKey() {
 				生成的应用密钥可用于调用 <a>全能搜题 API</a> 。
 			</p>
 
-			<div style={{ margin: '20px 0' }}>
-				{data?.data.map((item: any, index: number) => {
-					return (
-						<Panel key={index} style={{ marginBottom: 25, padding: 15 }} bordered>
-							<Row style={{ display: 'flex', flexDirection: 'row' }}>
-								<b style={{ margin: 0 }}>{item?.name}</b>
-								<div style={{ flex: 1 }} />
-								<p style={{ color: '#000' }}>API Token: </p>
-								<p style={{ margin: 0, marginLeft: 10 }}>{item?.api_token}</p>
-							</Row>
-							<Row style={{ display: 'flex', flexDirection: 'row', marginTop: 10 }}>
-								<p style={{ color: '#0006', fontWeight: 100 }}>{item?.app_home}</p>
-								<div style={{ flex: 1 }} />
-								<p style={{ color: '#000' }}>APP Secret: </p>
-								<p style={{ margin: 0, marginLeft: 10, color: '#0004' }}>{item?.app_secret}</p>
-							</Row>
-						</Panel>
-					);
-				})}
-			</div>
+			{loading ? (
+				<div style={{ margin: '20px 0' }}>
+					<Loader center content="loading..." vertical />
+				</div>
+			) : (
+				<div style={{ margin: '20px 0' }}>
+					{data?.data &&
+						data?.data?.map((item: any, index: number) => {
+							return (
+								<Panel key={index} style={{ marginBottom: 25, padding: 15 }} bordered>
+									<Row style={{ display: 'flex', flexDirection: 'row' }}>
+										<b style={{ margin: 0 }}>{item?.name}</b>
+										<div style={{ flex: 1 }} />
+										<p style={{ color: '#000' }}>API Token: </p>
+										<p style={{ margin: 0, marginLeft: 10 }}>{item?.api_token}</p>
+									</Row>
+									<Row style={{ display: 'flex', flexDirection: 'row', marginTop: 10 }}>
+										<p style={{ color: '#0006', fontWeight: 100 }}>{item?.app_home}</p>
+										<div style={{ flex: 1 }} />
+										<p style={{ color: '#000' }}>APP Secret: </p>
+										<p style={{ margin: 0, marginLeft: 10, color: '#0004' }}>{item?.app_secret}</p>
+									</Row>
+								</Panel>
+							);
+						})}
+				</div>
+			)}
 
 			<Modal
 				open={createAppKeyConfig?.showModal}
