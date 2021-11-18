@@ -11,7 +11,7 @@ export default function AppFooter() {
 	return (
 		<div className="footer">
 			<div className="layout footer_row">
-				<div>
+				<div className="footer_left">
 					<a target="_blank" href="http://beian.miit.gov.cn/?u=so.jszkk.com" rel="noreferrer">
 						蜀ICP备 18009530号-6
 					</a>
@@ -23,7 +23,7 @@ export default function AppFooter() {
 					</p>
 				</div>
 				<div style={{ flex: 1 }} />
-				<div>
+				<div className="footer_right">
 					<p>
 						友情链接{' '}
 						<a target="_blank" href="http://shitidaquan.com/?u=so.jszkk.com" rel="noreferrer">

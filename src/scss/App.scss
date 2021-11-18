@@ -69,6 +69,17 @@
 		.footer_row {
 			display: flex;
 			flex-direction: row;
+
+			@media screen and (max-width: 800px) {
+				.footer_left {
+					padding-left: 15px;
+				}
+
+				.footer_right {
+					visibility: hidden;
+					display: none;
+				}
+			}
 		}
 	}
 
