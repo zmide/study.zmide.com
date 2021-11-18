@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { axios } from 'api';
 import useAxios from 'axios-hooks';
 import { Button, Divider, Row, Modal, Form, Message, toaster, Panel, Loader } from 'rsuite';
+import config from 'config';
 
 export default function ApplicationKey() {
 	const [createAppKeyConfig, setcreateAppKeyConfig] = useState<any>({
@@ -98,7 +99,11 @@ export default function ApplicationKey() {
 				<Divider style={{ margin: 0 }} />
 			</div>
 			<p style={{ padding: '10px 0' }}>
-				生成的应用密钥可用于调用 <a>全能搜题 API</a> 。
+				生成的应用密钥可用于调用{' '}
+				<a target="_blank" href={config.docsURL} rel="noreferrer">
+					全能搜题 API
+				</a>{' '}
+				。
 			</p>
 
 			{loading ? (

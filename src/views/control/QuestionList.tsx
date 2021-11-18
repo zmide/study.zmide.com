@@ -20,7 +20,7 @@ export default function QuestionList() {
 			setquestionList({
 				...questionData?.data,
 			});
-			console.log(questionData?.data);
+			// console.log(questionData?.data);
 		}
 	}, [questionData]);
 

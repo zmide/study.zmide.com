@@ -22,6 +22,7 @@ import {
 import { axios } from 'api';
 import { UserStore } from 'stores';
 import { useNavigate } from 'react-router-dom';
+import config from 'config';
 
 const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {
 	const { me } = UserStore;
@@ -275,6 +276,10 @@ export default function AppHead() {
 				navigate('/control', {
 					replace: true,
 				});
+				break;
+			case 2:
+				// 新窗口打开开发文档
+				window.open(config.docsURL, '_blank');
 				break;
 			case 3:
 				// 用户退出登陆
