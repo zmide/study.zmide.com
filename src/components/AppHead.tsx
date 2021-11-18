@@ -85,7 +85,7 @@ export default function AppHead() {
 					toaster.push(<Message>{callback?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
 				} else {
 					const { data } = callback;
-					console.log('成功', callback);
+					// console.log('成功', callback);
 
 					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
 					setloginDrawer(false);
@@ -189,11 +189,10 @@ export default function AppHead() {
 
 				const { data } = res;
 
-				if (data?.code !== 200 || !data?.data) {
+				if (data?.code !== 200) {
 					toaster.push(<Message>{data?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
 				} else {
 					// console.log('成功', data);
-
 					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
 
 					// 启动重新获取验证码倒计时
@@ -217,7 +216,7 @@ export default function AppHead() {
 		isLoading: false,
 	});
 
-	const codeRetryTime = 6;
+	const codeRetryTime = 60;
 	const refCodeRetryStateConfig = useRef<any>({
 		endTime: codeRetryTime,
 		timer: null,
