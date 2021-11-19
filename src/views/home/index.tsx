@@ -29,7 +29,13 @@ function Index() {
 		}
 	);
 
-	const onSearch = () => {
+	const [searchConfig, setsearchConfig] = useState({
+		netLoading: false,
+	});
+	const onSearch = (keyword: string) => {
+		if (searchConfig?.netLoading) {
+			return;
+		}
 		setresult(undefined);
 
 		if (keyword.length === 0) {
@@ -38,11 +44,23 @@ function Index() {
 			});
 			return;
 		}
+		setsearchConfig({
+			netLoading: true,
+		});
 
 		axios
-			.get('//tool.chaoxing.zmorg.cn/api/search.php?q=' + keyword)
+			.get('https://tool.chaoxing.zmorg.cn/api/search.php', {
+				params: {
+					q: keyword,
+				},
+			})
 			.then((res: any) => {
 				const { msg } = res?.data;
+
+				setsearchConfig({
+					netLoading: false,
+				});
+
 				if (msg?.answer && msg?.question) {
 					setresult(msg);
 				} else {
@@ -56,6 +74,11 @@ function Index() {
 			.catch((e) => {
 				// console.log('搜题失败', e);
 				// toaster.clear();
+
+				setsearchConfig({
+					netLoading: false,
+				});
+
 				toaster.push(<Notification type="error" header={e + ''} closable />, {
 					placement: 'topEnd',
 				});
@@ -74,11 +97,11 @@ function Index() {
 							onKeyUp={(e) => {
 								if (e.key.match('Enter')) {
 									// 响应回车点击事件，立即搜索
-									onSearch();
+									onSearch(keyword);
 								}
 							}}
 						/>
-						<InputGroup.Button onClick={() => onSearch()}>
+						<InputGroup.Button loading={searchConfig?.netLoading} onClick={() => onSearch(keyword)}>
 							<Search />
 						</InputGroup.Button>
 					</InputGroup>
