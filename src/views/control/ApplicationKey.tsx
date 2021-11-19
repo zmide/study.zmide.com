@@ -76,7 +76,8 @@ export default function ApplicationKey() {
 
 	useEffect(() => {
 		// console.log(data);
-	}, [data]);
+		refetch();
+	}, [refetch]);
 
 	return (
 		<div>

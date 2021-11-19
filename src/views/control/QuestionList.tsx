@@ -24,6 +24,10 @@ export default function QuestionList() {
 		}
 	}, [questionData]);
 
+	useEffect(() => {
+		questionRefetch();
+	}, [questionRefetch]);
+
 	return (
 		<div>
 			<div>

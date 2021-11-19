@@ -3,7 +3,7 @@
  * @Date: 2021-11-16
  * @FilePath: /so.jszkk.com/src/views/control/UseStatistics.tsx
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import useAxios from 'axios-hooks';
 import { Panel, FlexboxGrid, Col, Loader } from 'rsuite';
@@ -13,6 +13,10 @@ export default function UseStatistics() {
 		method: 'GET',
 		url: '/api/panel/stats',
 	});
+
+	useEffect(() => {
+		refetch();
+	}, [refetch]);
 
 	if (loading) {
 		return (
