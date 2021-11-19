@@ -11,6 +11,7 @@ import axios from 'axios';
 import useAckee from 'use-ackee';
 
 import { AppHead, AppFooter } from 'components';
+import config from 'config';
 
 function Index() {
 	const [keyword, setkeyword] = useState('');
@@ -49,20 +50,24 @@ function Index() {
 		});
 
 		axios
-			.get('https://tool.chaoxing.zmorg.cn/api/search.php', {
+			.get(config?.serverURL + '/api/open/seek', {
 				params: {
 					q: keyword,
 				},
 			})
 			.then((res: any) => {
-				const { msg } = res?.data;
+				const { data, code, msg } = res?.data;
 
 				setsearchConfig({
 					netLoading: false,
 				});
 
-				if (msg?.answer && msg?.question) {
-					setresult(msg);
+				if (code === 200 && data) {
+					const { content, answer } = data;
+					setresult({
+						question: content,
+						answer,
+					});
 				} else {
 					// toaster.clear();
 					toaster.push(<Notification type="warning" header={msg} closable />, {

@@ -4,7 +4,7 @@
  * @FilePath: /so.jszkk.com/src/config.ts
  */
 const config = {
-    serverURL: "//127.0.0.1:8000",
+    serverURL: "//study.jszkk.com",
     docsURL: 'https://docsso.jszkk.com'
 }
 
