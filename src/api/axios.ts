@@ -25,5 +25,6 @@ const initAxios = () => {
     // console.log("接口拿到的用户", toJS(UserStore));
 }
 
-export default {};
+const apiAxios = { initAxios }
+export default apiAxios;
 export { initAxios }
