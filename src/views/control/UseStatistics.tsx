@@ -6,7 +6,7 @@
 import React, { useEffect } from 'react';
 
 import useAxios from 'axios-hooks';
-import { Panel, FlexboxGrid, Col, Loader, Toggle, Divider, Stack } from 'rsuite';
+import { Panel, FlexboxGrid, Col, Loader, Toggle, Stack } from 'rsuite';
 import { observer } from 'mobx-react';
 import { UserStore } from 'stores';
 import SettingStorage from 'stores/SettingStorage';
@@ -58,10 +58,12 @@ function UseStatistics() {
                             SettingStorage.setEnableChatGPT(value);
                         }} />
                     </Stack>
-                    {/* <Stack spacing={12}>
+                    <Stack spacing={12}>
                         <label>显示开发者 slogan:</label>
-                        <Toggle />
-                    </Stack> */}
+                        <Toggle checked={SettingStorage.showDeveloperSlogan} onChange={(value) => {
+                            SettingStorage.setShowDeveloperSlogan(value);
+                        }} />
+                    </Stack>
                 </Stack>
             </Panel>
 
