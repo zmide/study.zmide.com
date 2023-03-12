@@ -41,17 +41,14 @@ class UserStore {
 
     @action.bound
     updateInfo() {
-        axios.get('/member/user/info').then((res: any) => {
-            const { success, data } = res?.data;
-            if (success && data) {
+        axios.post('/api/auth/me').then((res: any) => {
+            const { code, data } = res?.data;
+            if (code === 200 && data) {
                 // console.log("用户数据", data);
                 this.setMe({
                     ...this.me,
-                    loggedInUser: {
-                        ...data
-                    }
+                    ...data
                 });
-
             }
         })
     }

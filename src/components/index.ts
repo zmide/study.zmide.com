@@ -6,3 +6,5 @@
 
 export { default as AppFooter } from './AppFooter';
 export { default as AppHead } from './AppHead';
+export { default as ResultChatGPTItem } from './ResultChatGPTItem';
+export { default as Skeleton } from './skeleton';

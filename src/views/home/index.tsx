@@ -4,17 +4,20 @@
  * @FilePath: /so.jszkk.com/src/views/home/index.tsx
  */
 
-import { useState } from 'react';
-import { InputGroup, Input, Notification, toaster } from 'rsuite';
+import React, { useState } from 'react';
+import { InputGroup, Input, Notification, toaster, Button } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import axios from 'axios';
 import useAckee from 'use-ackee';
 
-import { AppHead, AppFooter } from 'components';
+import { AppHead, AppFooter, ResultChatGPTItem } from 'components';
 import config from 'config';
+import { UserStore } from 'stores';
+import SettingStorage from 'stores/SettingStorage';
 
 function Index() {
     const [keyword, setkeyword] = useState('');
+    const [queryChatGPT, setqueryChatGPT] = useState('');
     const [result, setresult] = useState<any>();
 
     useAckee(
@@ -90,6 +93,18 @@ function Index() {
             });
     };
 
+    const isShowChatGPTItem = React.useMemo<boolean>(() => {
+        if (
+            SettingStorage.getEnableChatGPT() &&
+            UserStore.me != null &&
+            queryChatGPT != null &&
+            queryChatGPT !== ""
+        ) {
+            return true
+        }
+        return false
+    }, [queryChatGPT])
+
     return (
         <div className="container">
             <AppHead />
@@ -103,10 +118,14 @@ function Index() {
                                 if (e.key.match('Enter')) {
                                     // 响应回车点击事件，立即搜索
                                     onSearch(keyword);
+                                    setqueryChatGPT(keyword);
                                 }
                             }}
                         />
-                        <InputGroup.Button loading={searchConfig?.netLoading} onClick={() => onSearch(keyword)}>
+                        <InputGroup.Button loading={searchConfig?.netLoading} onClick={() => {
+                            onSearch(keyword);
+                            setqueryChatGPT(keyword);
+                        }}>
                             <Search />
                         </InputGroup.Button>
                     </InputGroup>
@@ -119,15 +138,28 @@ function Index() {
                             </div>
                         </div>
                     )}
+
+                    {isShowChatGPTItem && (
+                        <ResultChatGPTItem query={queryChatGPT} />
+                    )}
+
+                    {/* <div style={{ borderLeft: ".25em solid #94a3b866", maxWidth: 800, margin: "35px 0", paddingLeft: 14 }}>
+                        <p style={{ fontWeight: 'bold', flex: 1 }}>长夜将至，我从今开始守望，至死方休。我将不娶妻，不封地，不生子。我将不戴宝冠，不争荣宠。我将尽忠职守，生死于斯。我是黑暗中的利剑，长城上的守卫，抵御寒冷的烈焰，破晓时分的光线，唤醒眠者的号角，守护王国的坚盾。我将生命与荣耀献给守夜人，今夜如此，夜夜皆然。</p>
+                        <div style={{ display: 'flex', marginTop: 5 }}>
+                            <a>收起</a>
+                            <div style={{ flex: 1 }} />
+                            <p style={{ textAlign: 'right' }}>- 守夜人</p>
+                        </div>
+                    </div> */}
                 </div>
             </div>
-            <div style={{ padding: "14px 38px", display: 'flex' }}>
+            {/* <div style={{ padding: "14px 38px", display: 'flex' }}>
                 <div style={{ flex: 1 }} />
                 <div style={{ borderLeft: ".25em solid #94a3b8", paddingLeft: 14 }}>
                     <p style={{ fontWeight: 'bold' }}>What does not kill me makes me stronger.</p>
                     <p style={{ textAlign: 'right' }}>Friedrich Nietzsche</p>
                 </div>
-            </div>
+            </div> */}
             <AppFooter />
         </div>
     );
