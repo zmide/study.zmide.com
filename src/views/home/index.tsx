@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { InputGroup, Input, Notification, toaster, Modal, Button } from 'rsuite';
+import { InputGroup, Input, Notification, toaster, Modal, Button, Message } from 'rsuite';
 import { Search } from '@rsuite/icons';
 import axios from 'axios';
 import useAckee from 'use-ackee';
@@ -132,6 +132,16 @@ function Index() {
                             <Search />
                         </InputGroup.Button>
                     </InputGroup>
+
+                    {(!SettingStorage.getEnableChatGPT() && SettingStorage.showChatGPTHint) && (
+                        <div style={{ marginTop: 25, minHeight: 60 }}>
+                            <Message showIcon type="info" closable onClose={() => {
+                                SettingStorage.setShowChatGPTHint(false);
+                            }}>
+                                【实验性】目前全能搜题支持 ChatGPT AI 搜题功能，<a href='https://pro.tduckcloud.com/s/AxjurDjR' rel="noreferrer" target="_blank">开始使用</a>
+                            </Message>
+                        </div>
+                    )}
 
                     {result && (
                         <div className="search_result">

@@ -55,6 +55,7 @@ function UseStatistics() {
                     <Stack spacing={12}>
                         <label>启用 ChatGPT 搜索:</label>
                         <Toggle checked={SettingStorage.getEnableChatGPT()} onChange={(value) => {
+                            SettingStorage.setShowChatGPTHint(false);
                             SettingStorage.setEnableChatGPT(value);
                         }} />
                     </Stack>
