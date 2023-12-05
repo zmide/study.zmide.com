@@ -3,7 +3,7 @@
  * @Date: 2021-11-15
  * @FilePath: /so.jszkk.com/src/routers/routes.ts
  */
-import { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey, QuestionList, QuestionCreate } from 'views'
+import { HomeScreen, ControlScreen, NotFoundScreen, ControlUseStatistics, ApplicationKey, QuestionList, QuestionCreate, XlsxAnalyze } from 'views'
 
 const routes = [
     {
@@ -33,6 +33,11 @@ const routes = [
     {
         path: "question/create",
         component: QuestionCreate,
+        login: true,
+    },
+    {
+        path: "question/analyze",
+        component: XlsxAnalyze,
         login: true,
     },
     {

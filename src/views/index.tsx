@@ -16,6 +16,7 @@ const ControlUseStatisticsView = React.lazy(() => import('./control/UseStatistic
 const ApplicationKeyView = React.lazy(() => import('./control/ApplicationKey'));
 const QuestionListView = React.lazy(() => import('./control/QuestionList'));
 const QuestionCreateView = React.lazy(() => import('./question/QuestionCreate'));
+const XlsxAnalyzeView = React.lazy(() => import('./question/XlsxAnalyze'));
 
 const Suspense = (props: any) => {
 	return (
@@ -50,6 +51,11 @@ const QuestionCreate = (
 		<QuestionCreateView />
 	</Suspense>
 ); // 添加题目
+const XlsxAnalyze = (
+	<Suspense>
+		<XlsxAnalyzeView />
+	</Suspense>
+); // 解析表格
 
 const NotFoundScreen = (
 	<Suspense>
@@ -65,4 +71,5 @@ export {
 	ApplicationKey,
 	QuestionList,
 	QuestionCreate,
+	XlsxAnalyze
 };
