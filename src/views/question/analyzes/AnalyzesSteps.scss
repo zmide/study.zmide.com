@@ -1,0 +1,16 @@
+.analyzes_list {
+    .analyzes_item {
+        color: #fff;
+        padding: 15px;
+        background: #bbb;
+        border-radius: 10px;
+        max-width: 28%;
+        height: 200px;
+    }
+    .analyzes_item:hover {
+        padding: 14px;
+        border-width: 1px;
+        border-color: #56f;
+        border-style: solid;
+    }
+}

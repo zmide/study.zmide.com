@@ -37,6 +37,17 @@ export default function QuestionList() {
 						<div style={{ flex: 1 }} />
 						<Button
 							appearance="primary"
+							style={{
+								marginRight: 15
+							}}
+							onClick={() => {
+								navigate('/question/analyze');
+							}}
+						>
+							批量上传
+						</Button>
+						<Button
+							appearance="primary"
 							onClick={() => {
 								navigate('/question/create');
 							}}
