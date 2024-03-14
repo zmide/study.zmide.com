@@ -2,15 +2,24 @@
     .analyzes_item {
         color: #fff;
         padding: 15px;
-        background: #bbb;
+        background: #ccc;
         border-radius: 10px;
         max-width: 28%;
         height: 200px;
+
+        .title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .subtitle {
+            font-weight: 300;
+        }
     }
     .analyzes_item:hover {
         padding: 14px;
         border-width: 1px;
-        border-color: #56f;
+        border-color: #3498ff99;
         border-style: solid;
     }
 }

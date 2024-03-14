@@ -48,7 +48,7 @@ export default function Steps01(props: Steps01Props) {
 
     return (
         <div>
-            <Uploader action='' disabled={loading} accept={'.xlsx'} fileListVisible={false} draggable shouldUpload={async (file) => {
+            <Uploader style={{ marginTop: 25 }} action='' disabled={loading} accept={'.xlsx'} fileListVisible={false} draggable shouldUpload={async (file) => {
                 console.log('file', file);
                 if (file.blobFile) {
                     setLoading(true)
@@ -64,6 +64,10 @@ export default function Steps01(props: Steps01Props) {
                     <span>点击或拖拽文件到该区域即可上传</span>
                 </div>
             </Uploader>
+
+            {type === 'xlsx' && (
+                <p style={{ marginTop: 10, textAlign: 'end' }}>建议通过 <a href='https://docsso.jszkk.com/import_template.xlsx' target="_blank">下载模版文件</a> 填充题目后批量上传和解析题目。</p>
+            )}
         </div>
     )
 }

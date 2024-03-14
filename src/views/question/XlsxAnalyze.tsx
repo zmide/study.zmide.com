@@ -16,17 +16,20 @@ import {
 
 import Steps00 from './analyzes/Steps00';
 import Steps01 from './analyzes/Steps01';
+import Steps02 from './analyzes/Steps02';
 
 
 type DataAnalyzeConfig = {
-    type: 'xlsx'
+    type: 'xlsx',
+    inputLits: Array<any> | undefined,
 }
 
 export default function XlsxAnalyze() {
     const navigate = useNavigate();
 
     const [config, setConfig] = useState<DataAnalyzeConfig>({
-        type: 'xlsx'
+        type: 'xlsx',
+        inputLits: [],
     })
     const [stepsIndex, setStepsIndex] = useState(0)
 
@@ -43,7 +46,11 @@ export default function XlsxAnalyze() {
                                 <Button
                                     style={{ marginRight: 10 }}
                                     onClick={() => {
-
+                                        let index = stepsIndex + 1;
+                                        if (index > 3) {
+                                            index = 0;
+                                        }
+                                        setStepsIndex(index)
                                     }}
                                 >
                                     清空数据
@@ -55,7 +62,7 @@ export default function XlsxAnalyze() {
                             <Breadcrumb>
                                 <Breadcrumb.Item
                                     onClick={() => {
-                                        navigate('/control/', {
+                                        navigate('/control/questions', {
                                             replace: true,
                                         });
                                     }}
@@ -87,6 +94,9 @@ export default function XlsxAnalyze() {
                                 )}
                                 {stepsIndex === 1 && (
                                     <Steps01 type={config.type} />
+                                )}
+                                {stepsIndex === 2 && (
+                                    <Steps02 />
                                 )}
                             </div>
 

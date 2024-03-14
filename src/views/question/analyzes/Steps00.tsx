@@ -26,8 +26,8 @@ export default function Steps00(props: Steps00Props) {
                 <div key={`analyzes_steps00_item_${index}`}
                     className={`analyzes_item`}
                     onClick={() => props.onSelected(index)}>
-                    <p>{item.title}</p>
-                    <p>{item.subtitle}</p>
+                    <p className='title'>{item.title}</p>
+                    <p className='subtitle'>{item.subtitle}</p>
                 </div>
             ))}
 
