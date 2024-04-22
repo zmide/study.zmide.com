@@ -17,7 +17,7 @@ import {
 import Steps00 from './analyzes/Steps00';
 import Steps01 from './analyzes/Steps01';
 import Steps02 from './analyzes/Steps02';
-
+import Steps03 from './analyzes/Steps03';
 
 type DataAnalyzeConfig = {
     type: 'xlsx',
@@ -31,6 +31,24 @@ export default function XlsxAnalyze() {
         type: 'xlsx',
         inputLits: [],
     })
+
+
+    // 获取文件数据
+    const [fileData,setFileData] = useState<Array<Object>>([]);
+    const handleSend  = (fileData:Array<Object>)=>  {
+         setFileData(fileData);
+    }
+    // 通过ID删除行数据
+    const deleteFileDataById  = (id:number|string) =>{
+        
+        setFileData(
+            fileData.filter(item => {
+                return  !((item as any).id === id)
+            })
+        )       
+    }
+    let  [uploadNumber,setUploadNumber] = useState(0);
+
     const [stepsIndex, setStepsIndex] = useState(0)
 
     return (
@@ -93,10 +111,18 @@ export default function XlsxAnalyze() {
                                     }} />
                                 )}
                                 {stepsIndex === 1 && (
-                                    <Steps01 type={config.type} />
+                                    <Steps01 type={config.type} onSelected={() => setStepsIndex(2)} onHandleSend = {handleSend} />
                                 )}
                                 {stepsIndex === 2 && (
-                                    <Steps02 />
+                                    <Steps02 fileData  = {fileData} deleteFileDataById={deleteFileDataById} onSelected={
+                                        (uploadNUm:number) => {
+                                            setStepsIndex(3)
+                                            setUploadNumber(uploadNUm);
+                                        }
+                                    }  />
+                                )}
+                                {stepsIndex === 3 && (
+                                   <Steps03 uploadNumber={uploadNumber} />
                                 )}
                             </div>
 
