@@ -6,16 +6,23 @@
 import React, { useState } from 'react'
 import {
     Uploader,
-    Loader
+    Loader,
+    List
 } from 'rsuite';
 import * as XLSX from "xlsx";
+import { parseIrregularityData } from "./ParseFileDataUtil";
+
 
 export interface Steps01Props {
-    type: 'xlsx'
-}
+    type: 'xlsx',
+    onSelected:Function,
+    onHandleSend:Function
+} 
+
+
 
 export default function Steps01(props: Steps01Props) {
-    const { type } = props
+    const { type,onSelected } = props
 
     const [loading, setLoading] = useState(false)
 
@@ -46,17 +53,32 @@ export default function Steps01(props: Steps01Props) {
 
     }
 
+
     return (
         <div>
             <Uploader style={{ marginTop: 25 }} action='' disabled={loading} accept={'.xlsx'} fileListVisible={false} draggable shouldUpload={async (file) => {
                 console.log('file', file);
                 if (file.blobFile) {
                     setLoading(true)
-                    const data = await parseFileForXlsx(file.blobFile)
-                    console.log('data', data);
+                    const data:Array<Array<string>> = await parseFileForXlsx(file.blobFile)
+                    // const questions = xlslTransformArray(data);
+                    // if (questions.length === 0) {
+                    //     alert("暂未解析到数据")
+                    // }else{
+                    //     onSelected()
+                    // }
+
+                    // 处理数据
+                    const  parseData = parseIrregularityData(data)
+                    // 传递数据
+                    props.onHandleSend(parseData)
+                    // 跳转
+                    props.onSelected()
+                    
                     setLoading(false)
                 } else {
                     // TODO:文件上传失败
+                     alert("上传失败，请重新上传")
                 }
                 return false
             }}>
