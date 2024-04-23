@@ -61,13 +61,7 @@ export default function Steps01(props: Steps01Props) {
                 if (file.blobFile) {
                     setLoading(true)
                     const data:Array<Array<string>> = await parseFileForXlsx(file.blobFile)
-                    // const questions = xlslTransformArray(data);
-                    // if (questions.length === 0) {
-                    //     alert("暂未解析到数据")
-                    // }else{
-                    //     onSelected()
-                    // }
-
+                    
                     // 处理数据
                     const  parseData = parseIrregularityData(data)
                     // 传递数据
