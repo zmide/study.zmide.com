@@ -12,6 +12,7 @@ import {
     Divider,
     Breadcrumb,
     Steps,
+    Modal
 } from 'rsuite';
 
 import Steps00 from './analyzes/Steps00';
@@ -26,6 +27,9 @@ type DataAnalyzeConfig = {
 
 export default function XlsxAnalyze() {
     const navigate = useNavigate();
+    const [emptyModalConfig, setemptyModalConfig] = useState({
+        showModal: false,
+    });
 
     const [config, setConfig] = useState<DataAnalyzeConfig>({
         type: 'xlsx',
@@ -34,20 +38,20 @@ export default function XlsxAnalyze() {
 
 
     // 获取文件数据
-    const [fileData,setFileData] = useState<Array<Object>>([]);
-    const handleSend  = (fileData:Array<Object>)=>  {
-         setFileData(fileData);
+    const [fileData, setFileData] = useState<Array<Object>>([]);
+    const handleSend = (fileData: Array<Object>) => {
+        setFileData(fileData);
     }
     // 通过ID删除行数据
-    const deleteFileDataById  = (id:number|string) =>{
-        
+    const deleteFileDataById = (id: number | string) => {
+
         setFileData(
             fileData.filter(item => {
-                return  !((item as any).id === id)
+                return !((item as any).id === id)
             })
-        )       
+        )
     }
-    let  [uploadNumber,setUploadNumber] = useState(0);
+    let [uploadNumber, setUploadNumber] = useState(0);
 
     const [stepsIndex, setStepsIndex] = useState(0)
 
@@ -61,18 +65,18 @@ export default function XlsxAnalyze() {
                             <Row style={{ display: 'flex', padding: 10 }}>
                                 <h4 style={{ fontWeight: 300 }}>批量上传</h4>
                                 <div style={{ flex: 1 }} />
-                                <Button
-                                    style={{ marginRight: 10 }}
-                                    onClick={() => {
-                                        let index = stepsIndex + 1;
-                                        if (index > 3) {
-                                            index = 0;
-                                        }
-                                        setStepsIndex(index)
-                                    }}
-                                >
-                                    清空数据
-                                </Button>
+                                {
+                                    stepsIndex !== 2 ? <></> : <Button
+                                        style={{ marginRight: 10 }}
+                                        onClick={() => {
+                                            setemptyModalConfig({
+                                                showModal: true
+                                            })
+                                        }}
+                                    >
+                                        清空数据
+                                    </Button>
+                                }
                             </Row>
                             <Divider style={{ margin: 0 }} />
                         </div>
@@ -111,18 +115,18 @@ export default function XlsxAnalyze() {
                                     }} />
                                 )}
                                 {stepsIndex === 1 && (
-                                    <Steps01 type={config.type} onSelected={() => setStepsIndex(2)} onHandleSend = {handleSend} />
+                                    <Steps01 type={config.type} onSelected={() => setStepsIndex(2)} onHandleSend={handleSend} />
                                 )}
                                 {stepsIndex === 2 && (
-                                    <Steps02 fileData  = {fileData} deleteFileDataById={deleteFileDataById} onSelected={
-                                        (uploadNUm:number) => {
+                                    <Steps02 fileData={fileData} deleteFileDataById={deleteFileDataById} onSelected={
+                                        (uploadNUm: number) => {
                                             setStepsIndex(3)
                                             setUploadNumber(uploadNUm);
                                         }
-                                    }  />
+                                    } />
                                 )}
                                 {stepsIndex === 3 && (
-                                   <Steps03 uploadNumber={uploadNumber} />
+                                    <Steps03 uploadNumber={uploadNumber} />
                                 )}
                             </div>
 
@@ -132,6 +136,46 @@ export default function XlsxAnalyze() {
                 </div>
             </div>
             <AppFooter />
+
+
+            <Modal
+                backdrop="static"
+                role="alertdialog"
+                open={emptyModalConfig.showModal}
+                onClose={() =>
+                    setemptyModalConfig({
+                        showModal: false,
+                    })
+                }
+                size="xs"
+            >
+                <Modal.Body>清空数据需要重新提交文件解析，您要继续吗？</Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        onClick={() =>
+                            setemptyModalConfig({
+                                showModal: false,
+                            })
+                        }
+                        appearance="subtle"
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setFileData([])
+                            setStepsIndex(0)
+                            setemptyModalConfig({
+                                showModal: false,
+                            })
+
+                        }}
+                        appearance="primary"
+                    >
+                        确定
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
 
     )

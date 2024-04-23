@@ -5,8 +5,6 @@
  */
 import React, { useEffect, useMemo, useState } from 'react'
 import { Row, Table, SelectPicker, Button, Modal } from 'rsuite';
-import useAxios from 'axios-hooks';
-import { useNavigate } from 'react-router-dom';
 import { axios } from 'api';
 
 const { Column, HeaderCell, Cell } = Table;
@@ -17,7 +15,7 @@ const CompactHeaderCell = (props: any) => <HeaderCell {...props} style={{ paddin
 export interface Steps02Props {
     fileData: Array<Object>,
     deleteFileDataById: Function,
-    onSelected:Function
+    onSelected: Function
 }
 
 interface IColumn {
@@ -34,8 +32,7 @@ interface IKey {
 
 
 export default function Steps02(props: Steps02Props) {
-    const navigate = useNavigate();
-    const { fileData, deleteFileDataById,onSelected } = props;
+    const { fileData, deleteFileDataById, onSelected } = props;
     const defaultColumns: Array<IColumn> = [];
     const defaultRowKeys: Array<IKey> = [];
     const [oldValue, setOldValue] = useState<Map<string, number>>(new Map([
@@ -52,25 +49,10 @@ export default function Steps02(props: Steps02Props) {
     const [selectPickerNumber, setSelectPickerNumber] = useState<number>(4);
     const [disabledOptions, setDisabledOptions] = useState<Array<number>>([0, 1]);
 
-    const [emptyModalConfig, setemptyModalConfig] = useState({
+    const [modalConfig, setModalConfig] = useState({
         showModal: false,
+        message: ""
     });
-
-    // 获取密钥
-    const [secretKey, setSecretKey] = useState<string>('');
-    const [{ data, loading }, refetch] = useAxios({
-        method: 'GET',
-        url: '/api/appsecret/list',
-    });
-
-    const defaultSecretKey = useMemo(() => {
-        return data?.data.map((item: any) => {
-            return {
-                label: item.name,
-                value: item.api_token
-            }
-        })
-    }, [data])
 
 
     // 更多解析方案
@@ -81,7 +63,7 @@ export default function Steps02(props: Steps02Props) {
             // 解析中文答案 包括 苹果#梨子 苹果,梨子 ......
         } else if (answer.split(/[,#.]/).filter(item => item.trim().length > 0)) {
             return answer.split(/[,#.]/).filter(item => item.trim().length > 0)
-        }else if (answer.split(/[\s^]/).filter(item => item.trim().length > 0)) {
+        } else if (answer.split(/[\s^]/).filter(item => item.trim().length > 0)) {
             return answer.split(/[\s^]/).filter(item => item.trim().length > 0)
         }
         return []
@@ -222,27 +204,32 @@ export default function Steps02(props: Steps02Props) {
             answer: filter_answer
         }
     }
+
     // 提交数据到服务器
-    const APICrreateQuestions = (secretKey: string, data: string) => {
-        axios
-            .post('/api/open/submit', data, {
-                headers: {
-                    "Authorization": secretKey,
-                    "Content-Type": "application/json; charset=utf-8"
-                }
-            }).then((res: any) => {
-                console.log(res);
-                const { data } = res;
-                if (data?.code !== 200 || !data?.data) {
-                    alert(data?.msg + '' || '失败，请稍后重试！')
-				}else {
-                    onSelected(data?.data.success.length)
-                }
-                
-            }).catch((error:any)=>{
-                alert(error + '' || '失败，请稍后重试！')
+    const APICrreateQuestions = (data: string) => {
+        axios.post('api/question/submit', data, {
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            }
+        }).then((res: any) => {
+            console.log(res);
+            const { data } = res;
+            if (data?.code !== 200 || !data?.data) {
+                setModalConfig({
+                    showModal: true,
+                    message: data?.msg + '' || '失败，请稍后重试！'
+                })
+            } else {
+                onSelected(data?.data.success.length)
+            }
+        }).catch((error: any) => {
+            setModalConfig({
+                showModal: true,
+                message: error + '' || '失败，请稍后重试！'
             })
+        })
     }
+
     // 提交
     const commit = () => {
         const optionsIsNull = (options.size === 0);
@@ -272,14 +259,7 @@ export default function Steps02(props: Steps02Props) {
         // console.log(data);
         const json_data = JSON.stringify(data)
         console.log(json_data);
-        if (!(secretKey === '')) {
-            APICrreateQuestions(secretKey,json_data)
-        } else {
-            setemptyModalConfig({
-                showModal: true
-            })
-        }
-
+        APICrreateQuestions(data)
     }
 
     const cleanOptions = (index: number) => {
@@ -372,7 +352,7 @@ export default function Steps02(props: Steps02Props) {
                     range(0, selectPickerNumber).map(index => {
                         return (<SelectPicker label={String.fromCharCode((65 + index)) + " 选项"}
                             data={rowKeys} searchable={false}
-                            style={{ width: 124, marginRight: 10 }}
+                            style={{ width: 124, marginRight: 10, marginTop: 10 }}
                             disabledItemValues={disabledOptions}
                             onChange={
                                 (value, event) => {
@@ -393,7 +373,7 @@ export default function Steps02(props: Steps02Props) {
                         />)
                     })
                 }
-                <Button onClick={() => {
+                <Button style={{ marginTop: 10 }} onClick={() => {
                     if (selectPickerNumber < (max_len - 2)) {
                         setSelectPickerNumber(selectPickerNumber + 1)
                     } else {
@@ -402,58 +382,45 @@ export default function Steps02(props: Steps02Props) {
                 }}>增加选项</Button>
             </Row>
 
-            <Row style={{ padding: '0px 5px', paddingBottom: 20 }}>
-                <SelectPicker label="应用密钥" data={defaultSecretKey} searchable={false} style={{ width: 124, marginRight: 10 }} onChange={(value, event) => {
-                    if (value !== '') {
-                        setSecretKey((value as string))
-                    }
-                }} />
-            </Row>
+
 
             <Row>
                 <div style={{ flex: 1, display: 'flex' }}>
-                    <Button appearance='link'>高级配置</Button>
-                    <Button appearance='primary' onClick={commit}>确定提交</Button>
+                    {/* 高级配置功能暂未实现 */}
+                    {/* <Button appearance='link'>高级配置</Button> */}
+                    <Button style={{ marginLeft: 5 }} appearance='primary' onClick={commit}>确定提交</Button>
                 </div>
             </Row>
 
             <Modal
                 backdrop="static"
                 role="alertdialog"
-                open={emptyModalConfig.showModal}
+                open={modalConfig.showModal}
                 onClose={() =>
-                    setemptyModalConfig({
+                    setModalConfig({
                         showModal: false,
+                        message: ""
                     })
                 }
                 size="xs"
             >
                 <Modal.Body>
                     {
-                        defaultSecretKey?.length !== 0 ? "请选择一个应用密钥后进行上传。" : "您暂时没有创建应用，请前往控制中心>应用密钥创建密钥后再进行上传。"
+                        modalConfig.message
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button
-                        onClick={() =>
-                            setemptyModalConfig({
-                                showModal: false,
-                            })
-                        }
-                        appearance="subtle"
-                    >
-                        知道了
-                    </Button>
                     {
-                        defaultSecretKey?.length !== 0 ? <></> : <Button
+                        <Button
                             onClick={() => {
-                                navigate("/control/appkeys", {
-                                    replace: true,
-                                });
+                                setModalConfig({
+                                    showModal: false,
+                                    message: ""
+                                })
                             }}
                             appearance="primary"
                         >
-                            去创建
+                            确定
                         </Button>
                     }
                 </Modal.Footer>
