@@ -415,7 +415,7 @@ export default function QuestionCreate() {
 							<Breadcrumb>
 								<Breadcrumb.Item
 									onClick={() => {
-										navigate('/control/', {
+										navigate('/control/questions', {
 											replace: true,
 										});
 									}}
