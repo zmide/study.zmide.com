@@ -116,7 +116,7 @@ export default function AppHead() {
 			return;
 		}
 		if (password !== confirm_password) {
-			toaster.push(<Message>密码不匹配</Message>)
+			toaster.push(<Message type="error">密码不匹配</Message>)
 			return
 		}
 		setregisterConfig({
