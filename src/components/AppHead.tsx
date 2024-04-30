@@ -107,13 +107,17 @@ export default function AppHead() {
 	};
 
 	const [registerConfig, setregisterConfig] = useState<any>({ netLoading: false });
-	const __APIRegister = (name: string, email: string, code: string, password: string) => {
+	const __APIRegister = (name: string, email: string, code: string, password: string, confirm_password: string) => {
 		if (registerConfig?.netLoading) {
 			return;
 		}
-		if (!name || !email || !code || !password) {
+		if (!name || !email || !code || !password || !confirm_password) {
 			toaster.push(<Message>数据填写不完整。</Message>);
 			return;
+		}
+		if (password !== confirm_password) {
+			toaster.push(<Message>密码不匹配</Message>)
+			return
 		}
 		setregisterConfig({
 			...registerConfig,
@@ -444,6 +448,11 @@ export default function AppHead() {
 								</Form.Group>
 
 								<Form.Group>
+									<Form.ControlLabel>确认密码</Form.ControlLabel>
+									<Form.Control name="confirm_password" type="password" autoComplete="off" />
+								</Form.Group>
+
+								<Form.Group>
 									<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
 										<Button
 											appearance="primary"
@@ -453,7 +462,8 @@ export default function AppHead() {
 													registerConfig?.name,
 													registerConfig?.email,
 													registerConfig?.code,
-													registerConfig?.password
+													registerConfig?.password,
+													registerConfig?.confirm_password,
 												);
 												// console.log('注册数据', registerConfig);
 											}}
