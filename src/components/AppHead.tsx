@@ -124,13 +124,13 @@ const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
 					>
 						立即登陆
 					</Button>
-					<Whisper
+					{/* <Whisper
 						placement="top"
 						trigger="hover"
 						speaker={__tooltip('如需重置密码请登陆服务器或联系超级管理员操作！')}
-					>
-						<Button appearance="link">忘记密码？</Button>
-					</Whisper>
+					> */}
+						<Button onClick={() => switchTo(2)}>忘记密码？</Button>
+					{/* </Whisper> */}
 					<div style={{ flex: 1 }}></div>
 					<Button onClick={() => switchTo(1)}>注册账号</Button>
 				</ButtonToolbar>
@@ -368,9 +368,171 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 	)
 }
 
+const initialValue = {
+	email: '',
+	code: '',
+	password: '',
+	confirm_password: '',
+}
+
+const RetrievePanel = ({switchTo} : PanelProps) => {
+	const [formValue, setFormValue] = useState<any>(initialValue);
+	const [{loading}, executeRetrieve] = useAxios({
+		url: '/api/auth/forgot',
+		method: 'post'
+	}, {manual: true})
+	const [, executeGetCode] = useAxios({
+		url: '/api/auth/send',
+		method: 'post'
+	}, {manual: true})
+	const [seconds, setSeconds] = useState(0)
+	const intervalRef = useRef<any>(null)
+
+	useEffect(() => {
+		if (seconds === 0) {
+			clearInterval(intervalRef.current)
+		}
+	}, [seconds])
+
+	const startCountDown = () => {
+		setSeconds(60)
+		intervalRef.current = window.setInterval(() => {
+			setSeconds(s => s - 1)
+		}, 1000)
+	}
+
+	const clearCountDown = () => {
+		clearInterval(intervalRef.current)
+		setSeconds(0)
+	}
+
+	const handleGetCode = (email: string) => {
+		if (!email) {
+			toaster.push(<Message>邮箱地址未输入。</Message>);
+			return;
+		}
+
+		startCountDown()
+
+		executeGetCode({data: { email, type: 1 }})
+			.then(({data}) => {
+				// console.log(res)
+				if (data.code === 200) {
+					toaster.push(<Message>验证码已发送</Message>);
+				} else {
+					toaster.push(<Message>{data?.msg || '验证码发送失败，请稍后重试！'}</Message>);
+					clearCountDown()
+				}
+			})
+			.catch((err: any) => {
+				toaster.push(<Message type="error">{err.toString()}</Message>)
+				clearCountDown()
+			})
+	}
+
+	const handleRetrieve = (email: string, code: string, password: string, confirm_password: string) => {
+		if (loading) {
+			return
+		}
+
+		if (!email || !code || !password) {
+			toaster.push(<Message>数据填写不完整。</Message>);
+			return
+		}
+
+		if (password !== confirm_password) {
+			toaster.push(<Message type="error">密码不匹配</Message>)
+			return
+		}
+
+		executeRetrieve({ data: {
+			email,
+			code,
+			password
+		}})
+		.then(({data}) => {
+			console.log(data)
+			if (data.code === 200) {
+				toaster.push(<Message>改密成功</Message>);
+				switchTo(0)
+			} else {
+				toaster.push(<Message type="error">{data?.msg || '修改密码失败，请稍后重试！'}</Message>);
+			}
+		})
+		.catch((err: any) => {
+			toaster.push(<Message type="error">{err.toString()}</Message>)
+		})
+	}
+
+	return (
+		<Form
+			formValue={formValue}
+			onChange={(formValue) => {
+				setFormValue(formValue)
+			}}
+			fluid
+		>
+			<Form.Group>
+				<Form.ControlLabel>邮箱地址</Form.ControlLabel>
+				<Form.Control name="email" type="email" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>验证码</Form.ControlLabel>
+				<InputGroup inside style={{ width: '100%' }}>
+					<Input
+						name="code"
+						onChange={(value) => {
+							setFormValue({...formValue, code: value})
+						}}
+					/>
+					<InputGroup.Button
+						loading={loading}
+						disabled={seconds > 0}
+						onClick={() => {
+							handleGetCode(formValue.email)
+						}}
+					>
+						{seconds
+							? `${seconds} 秒后重试`
+							: '获取验证码'}
+					</InputGroup.Button>
+				</InputGroup>
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>密码</Form.ControlLabel>
+				<Form.Control name="password" type="password" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>确认密码</Form.ControlLabel>
+				<Form.Control name="confirm_password" type="password" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
+					<Button
+						appearance="primary"
+						loading={loading}
+						onClick={() => {
+							handleRetrieve(formValue.email, formValue.code, formValue.password, formValue.confirm_password)
+						}}
+					>
+						重置密码
+					</Button>
+					<div style={{ flex: 1 }}></div>
+					<Button onClick={() => switchTo(0) }>想起来了</Button>
+				</ButtonToolbar>
+			</Form.Group>
+		</Form>
+	)
+}
+
 const panels : Record<number, (props: any) => JSX.Element> = {
 	0: LoginPanel,
-	1: RegisterPanel
+	1: RegisterPanel,
+	2: RetrievePanel,
 }
 
 export default function AppHead() {
