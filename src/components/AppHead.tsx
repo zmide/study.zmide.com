@@ -23,6 +23,7 @@ import { axios } from 'api';
 import { UserStore } from 'stores';
 import { useNavigate } from 'react-router-dom';
 import config from 'config';
+import useAxios from 'axios-hooks';
 
 const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {
 	const { me } = UserStore;
@@ -45,70 +46,105 @@ const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {
 	);
 });
 
-export default function AppHead() {
-	const [loginDrawer, setloginDrawer] = useState(false);
-	const [isRegister, setisRegister] = useState(false);
-	const navigate = useNavigate();
+const __tooltip = (msg: string) => <Tooltip>{msg}</Tooltip>;
 
-	const __tooltip = (msg: string) => <Tooltip>{msg}</Tooltip>;
+interface PanelProps {
+	switchTo:  React.Dispatch<React.SetStateAction<number>>
+	setloginDrawer:  React.Dispatch<React.SetStateAction<boolean>>
+}
 
-	const [loginConfig, setloginConfig] = useState<any>({});
-	const __APILogin = (account: string, password: string) => {
-		if (loginConfig?.netLoading) {
-			return;
-		}
+const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
+	const [formData, setFormData] = useState<any>({})
+	const [{ loading }, executeLogin] = useAxios({
+		url: '/api/auth/login',
+		method: 'POST'
+	}, { manual: true })
+
+	const handleLogin = (account: string, password: string) => {
 		if (!account || !password) {
 			toaster.push(<Message>账号或密码不得为空。</Message>);
-			return;
+			return	
 		}
-		setloginConfig({
-			...loginConfig,
-			netLoading: true,
-		});
-		const msgTitle = '登陆';
-		const params = {
+
+		executeLogin({data: {
 			email: account,
-			password,
-		};
+			password: password
+		}})
+		.then(({data}) =>{
+			if (data.code !== 200) {
+				toaster.push(<Message>{`${data?.msg || "登录失败, 请稍后重试!"}`}</Message>);
+			} else {
+				toaster.push(<Message>{"登录成功"}</Message>);
+				UserStore.login(data.data)
+				setloginDrawer(false)
+				setFormData({})
+			}
+		})
+		.catch((err) => {
+			toaster.push(<Message>{`登录失败!${err}`}</Message>);
+		})
+	}
 
-		axios
-			.post('/api/auth/login', params, {})
-			.then((res: any) => {
-				setloginConfig({
-					...loginConfig,
-					netLoading: false,
-				});
+	return (
+		<Form
+			onChange={(data: any) => {
+				setFormData(data)
+			}}
+			fluid
+		>
+			<Form.Group>
+				<Form.ControlLabel>账号/邮箱</Form.ControlLabel>
+				<Form.Control name="account" autoComplete="off" />
+			</Form.Group>
 
-				const { data: callback } = res;
+			<Form.Group>
+				<Form.ControlLabel>密码</Form.ControlLabel>
+				<Form.Control
+					name="password"
+					type="password"
+					autoComplete="off"
+					onKeyUp={(e: any) => {
+						if (e.keyCode === 13) {
+							// 响应回车点击事件，立即登陆
+						}
+					}}
+					required={true}
+				/>
+			</Form.Group>
 
-				if (callback?.code !== 200 || !callback?.data) {
-					toaster.push(<Message>{callback?.msg || msgTitle + '失败，请稍后重试！'}</Message>);
-				} else {
-					const { data } = callback;
-					// console.log('成功', callback);
+			<Form.Group>
+				<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
+					<Button
+						appearance="primary"
+						loading={loading}
+						onClick={() => {
+							handleLogin(formData.account, formData.password)
+							// console.log('账号', loginConfig);
+						}}
+					>
+						立即登陆
+					</Button>
+					<Whisper
+						placement="top"
+						trigger="hover"
+						speaker={__tooltip('如需重置密码请登陆服务器或联系超级管理员操作！')}
+					>
+						<Button appearance="link">忘记密码？</Button>
+					</Whisper>
+					<div style={{ flex: 1 }}></div>
+					<Button onClick={() => switchTo(1)}>注册账号</Button>
+				</ButtonToolbar>
+			</Form.Group>
+		</Form>
+	)
+}
 
-					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
-					setloginDrawer(false);
-					UserStore.login(data);
+const RegisterPanel = ({ switchTo }: PanelProps) => {
+	const [formData, setFormData] = useState<any>({})
+	const [netLoading, setNetLoading] = useState(false);
 
-					// 成功，关闭弹窗，刷新列表数据，清空编辑框数据
-					setloginConfig({
-						netLoading: false,
-					});
-				}
-			})
-			.catch((error: any) => {
-				setloginConfig({
-					...loginConfig,
-					netLoading: false,
-				});
-				toaster.push(<Message>{error + '' || msgTitle + '失败，请稍后重试！'}</Message>);
-			});
-	};
-
-	const [registerConfig, setregisterConfig] = useState<any>({ netLoading: false });
 	const __APIRegister = (name: string, email: string, code: string, password: string, confirm_password: string) => {
-		if (registerConfig?.netLoading) {
+		if (netLoading) {
 			return;
 		}
 		if (!name || !email || !code || !password || !confirm_password) {
@@ -119,10 +155,7 @@ export default function AppHead() {
 			toaster.push(<Message type="error">密码不匹配</Message>)
 			return
 		}
-		setregisterConfig({
-			...registerConfig,
-			netLoading: true,
-		});
+		setNetLoading(true)
 		const msgTitle = '注册账号';
 		const params = {
 			email,
@@ -134,11 +167,8 @@ export default function AppHead() {
 		axios
 			.post('/api/auth/reg', params, {})
 			.then((res: any) => {
-				setregisterConfig({
-					...registerConfig,
-					netLoading: false,
-				});
-
+				setNetLoading(false)
+				
 				const { data } = res;
 
 				if (data?.code !== 200 || !data?.data) {
@@ -149,22 +179,18 @@ export default function AppHead() {
 					toaster.push(<Message>{msgTitle + '成功。'}</Message>);
 
 					// 成功，关闭弹窗，刷新列表数据，清空编辑框数据
-					setregisterConfig({
-						netLoading: false,
-					});
+					setNetLoading(false)
+					setFormData({})
 				}
 			})
 			.catch((error: any) => {
-				setregisterConfig({
-					...registerConfig,
-					netLoading: false,
-				});
+				setNetLoading(false)
 				toaster.push(<Message>{error + '' || msgTitle + '失败，请稍后重试！'}</Message>);
 			});
 	};
 
 	const [getCodeConfig, setgetCodeConfig] = useState<any>({ netLoading: false });
-	const __APIGetCode = (email: string) => {
+	const __APIGetCode = (email: string, type: number = 0) => {
 		if (getCodeConfig?.netLoading || codeRetryStateConfig?.isLoading) {
 			return;
 		}
@@ -180,7 +206,7 @@ export default function AppHead() {
 		const msgTitle = '获取验证码';
 		const params = {
 			email,
-			type: 0,
+			type: type,
 		};
 
 		axios
@@ -206,6 +232,7 @@ export default function AppHead() {
 					setgetCodeConfig({
 						netLoading: false,
 					});
+					setFormData({})
 				}
 			})
 			.catch((error: any) => {
@@ -216,6 +243,7 @@ export default function AppHead() {
 				toaster.push(<Message>{error + '' || msgTitle + '失败，请稍后重试！'}</Message>);
 			});
 	};
+
 	const [codeRetryStateConfig, setcodeRetryStateConfig] = useState<any>({
 		isLoading: false,
 	});
@@ -263,7 +291,93 @@ export default function AppHead() {
 		};
 	}, []);
 
+	return (
+		<Form
+			formValue={formData}
+			onChange={(data) => {
+				setFormData(data)
+			}}
+			fluid
+		>
+			<Form.Group>
+				<Form.ControlLabel>昵称</Form.ControlLabel>
+				<Form.Control name="name" type="name" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>邮箱地址</Form.ControlLabel>
+				<Form.Control name="email" type="email" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>验证码</Form.ControlLabel>
+				<InputGroup inside style={{ width: '100%' }}>
+					<Input
+						name="code"
+						onChange={(value) => {
+							setFormData({...formData, code: value})
+						}}
+					/>
+					<InputGroup.Button
+						loading={getCodeConfig?.netLoading}
+						disabled={codeRetryStateConfig?.isLoading}
+						onClick={() => {
+							__APIGetCode(formData?.email);
+						}}
+					>
+						{codeRetryStateConfig?.isLoading
+							? `${refCodeRetryStateConfig?.current?.endTime} 秒后重试`
+							: '获取验证码'}
+					</InputGroup.Button>
+				</InputGroup>
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>密码</Form.ControlLabel>
+				<Form.Control name="password" type="password" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<Form.ControlLabel>确认密码</Form.ControlLabel>
+				<Form.Control name="confirm_password" type="password" autoComplete="off" />
+			</Form.Group>
+
+			<Form.Group>
+				<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
+					<Button
+						appearance="primary"
+						loading={netLoading}
+						onClick={() => {
+							__APIRegister(
+								formData?.name,
+								formData?.email,
+								formData?.code,
+								formData?.password,
+								formData?.confirm_password,
+							);
+							// console.log('注册数据', registerConfig);
+						}}
+					>
+						立即注册
+					</Button>
+					<div style={{ flex: 1 }}></div>
+					<Button onClick={() => switchTo(0) }>已经有账号，登陆</Button>
+				</ButtonToolbar>
+			</Form.Group>
+		</Form>
+	)
+}
+
+const panels : Record<number, (props: any) => JSX.Element> = {
+	0: LoginPanel,
+	1: RegisterPanel
+}
+
+export default function AppHead() {
+	const [loginDrawer, setloginDrawer] = useState(false);
+	const navigate = useNavigate();
 	const refUserWhisper = useRef<any>();
+	const [currentPanel, setCurrentPanel] = useState(0)
 
 	let operateUserControl = false;
 	const onUserControl = (key: number) => {
@@ -296,6 +410,8 @@ export default function AppHead() {
 			operateUserControl = false;
 		}, 500);
 	};
+
+	const Panel = panels[currentPanel]
 
 	return (
 		<>
@@ -346,136 +462,7 @@ export default function AppHead() {
 						<h3>登陆全能搜题开放平台</h3>
 						<p style={{ marginTop: 5, marginBottom: 45 }}>登陆后可以上传题库，添加题目，调用搜题接口</p>
 
-						{!isRegister ? (
-							<Form
-								onChange={(data) => {
-									setloginConfig({ ...loginConfig, ...data });
-								}}
-								fluid
-							>
-								<Form.Group>
-									<Form.ControlLabel>账号/邮箱</Form.ControlLabel>
-									<Form.Control name="account" autoComplete="off" />
-								</Form.Group>
-
-								<Form.Group>
-									<Form.ControlLabel>密码</Form.ControlLabel>
-									<Form.Control
-										name="password"
-										type="password"
-										autoComplete="off"
-										onKeyUp={(e: any) => {
-											if (e.keyCode === 13) {
-												// 响应回车点击事件，立即登陆
-											}
-										}}
-									/>
-								</Form.Group>
-
-								<Form.Group>
-									<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
-										<Button
-											appearance="primary"
-											loading={loginConfig?.netLoading}
-											onClick={() => {
-												__APILogin(loginConfig?.account, loginConfig?.password);
-												// console.log('账号', loginConfig);
-											}}
-										>
-											立即登陆
-										</Button>
-										<Whisper
-											placement="top"
-											trigger="hover"
-											speaker={__tooltip('如需重置密码请登陆服务器或联系超级管理员操作！')}
-										>
-											<Button appearance="link">忘记密码？</Button>
-										</Whisper>
-										<div style={{ flex: 1 }}></div>
-										<Button onClick={() => setisRegister(true)}>注册账号</Button>
-									</ButtonToolbar>
-								</Form.Group>
-							</Form>
-						) : (
-							<Form
-								onChange={(data) => {
-									setregisterConfig({
-										...registerConfig,
-										...data,
-									});
-								}}
-								fluid
-							>
-								<Form.Group>
-									<Form.ControlLabel>昵称</Form.ControlLabel>
-									<Form.Control name="name" type="name" autoComplete="off" />
-								</Form.Group>
-
-								<Form.Group>
-									<Form.ControlLabel>邮箱地址</Form.ControlLabel>
-									<Form.Control name="email" type="email" autoComplete="off" />
-								</Form.Group>
-
-								<Form.Group>
-									<Form.ControlLabel>验证码</Form.ControlLabel>
-									<InputGroup inside style={{ width: '100%' }}>
-										<Input
-											name="code"
-											onChange={(value) => {
-												setregisterConfig({
-													...registerConfig,
-													code: value,
-												});
-											}}
-										/>
-										<InputGroup.Button
-											loading={getCodeConfig?.netLoading}
-											disabled={codeRetryStateConfig?.isLoading}
-											onClick={() => {
-												__APIGetCode(registerConfig?.email);
-											}}
-										>
-											{codeRetryStateConfig?.isLoading
-												? `${refCodeRetryStateConfig?.current?.endTime} 秒后重试`
-												: '获取验证码'}
-										</InputGroup.Button>
-									</InputGroup>
-								</Form.Group>
-
-								<Form.Group>
-									<Form.ControlLabel>密码</Form.ControlLabel>
-									<Form.Control name="password" type="password" autoComplete="off" />
-								</Form.Group>
-
-								<Form.Group>
-									<Form.ControlLabel>确认密码</Form.ControlLabel>
-									<Form.Control name="confirm_password" type="password" autoComplete="off" />
-								</Form.Group>
-
-								<Form.Group>
-									<ButtonToolbar style={{ paddingTop: 20, display: 'flex' }}>
-										<Button
-											appearance="primary"
-											loading={registerConfig?.netLoading}
-											onClick={() => {
-												__APIRegister(
-													registerConfig?.name,
-													registerConfig?.email,
-													registerConfig?.code,
-													registerConfig?.password,
-													registerConfig?.confirm_password,
-												);
-												// console.log('注册数据', registerConfig);
-											}}
-										>
-											立即注册
-										</Button>
-										<div style={{ flex: 1 }}></div>
-										<Button onClick={() => setisRegister(false)}>已经有账号，登陆</Button>
-									</ButtonToolbar>
-								</Form.Group>
-							</Form>
-						)}
+						{  <Panel switchTo={setCurrentPanel} setloginDrawer={setloginDrawer} /> }
 					</div>
 				</Drawer.Body>
 			</Drawer>
