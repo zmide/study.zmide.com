@@ -617,8 +617,8 @@ export default function AppHead() {
 							justifyContent: 'center',
 						}}
 					>
-						<h3>登陆全能搜题开放平台</h3>
-						<p style={{ marginTop: 5, marginBottom: 45 }}>登陆后可以上传题库，添加题目，调用搜题接口</p>
+						<h3>登录全能搜题开放平台</h3>
+						<p style={{ marginTop: 5, marginBottom: 45 }}>登录后可以上传题库，添加题目，调用搜题接口</p>
 
 						{<Panel switchTo={setCurrentPanel} setloginDrawer={setloginDrawer} />}
 					</div>
