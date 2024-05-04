@@ -46,11 +46,9 @@ const MenuPopover = React.forwardRef(({ onSelect, ...rest }: any, ref: any) => {
 	);
 });
 
-const __tooltip = (msg: string) => <Tooltip>{msg}</Tooltip>;
-
 interface PanelProps {
-	switchTo:  React.Dispatch<React.SetStateAction<number>>
-	setloginDrawer:  React.Dispatch<React.SetStateAction<boolean>>
+	switchTo: React.Dispatch<React.SetStateAction<number>>
+	setloginDrawer: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
@@ -63,26 +61,28 @@ const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
 	const handleLogin = (account: string, password: string) => {
 		if (!account || !password) {
 			toaster.push(<Message>账号或密码不得为空。</Message>);
-			return	
+			return
 		}
 
-		executeLogin({data: {
-			email: account,
-			password: password
-		}})
-		.then(({data}) =>{
-			if (data.code !== 200) {
-				toaster.push(<Message>{`${data?.msg || "登录失败, 请稍后重试!"}`}</Message>);
-			} else {
-				toaster.push(<Message>{"登录成功"}</Message>);
-				UserStore.login(data.data)
-				setloginDrawer(false)
-				setFormData({})
+		executeLogin({
+			data: {
+				email: account,
+				password: password
 			}
 		})
-		.catch((err) => {
-			toaster.push(<Message>{`登录失败!${err}`}</Message>);
-		})
+			.then(({ data }) => {
+				if (data.code !== 200) {
+					toaster.push(<Message>{`${data?.msg || "登录失败, 请稍后重试!"}`}</Message>);
+				} else {
+					toaster.push(<Message>{"登录成功"}</Message>);
+					UserStore.login(data.data)
+					setloginDrawer(false)
+					setFormData({})
+				}
+			})
+			.catch((err) => {
+				toaster.push(<Message>{`登录失败!${err}`}</Message>);
+			})
 	}
 
 	return (
@@ -122,15 +122,9 @@ const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
 							// console.log('账号', loginConfig);
 						}}
 					>
-						立即登陆
+						立即登录
 					</Button>
-					{/* <Whisper
-						placement="top"
-						trigger="hover"
-						speaker={__tooltip('如需重置密码请登陆服务器或联系超级管理员操作！')}
-					> */}
-						<Button onClick={() => switchTo(2)}>忘记密码？</Button>
-					{/* </Whisper> */}
+					<Button appearance="link" onClick={() => switchTo(2)}>找回密码</Button>
 					<div style={{ flex: 1 }}></div>
 					<Button onClick={() => switchTo(1)}>注册账号</Button>
 				</ButtonToolbar>
@@ -168,7 +162,7 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 			.post('/api/auth/reg', params, {})
 			.then((res: any) => {
 				setNetLoading(false)
-				
+
 				const { data } = res;
 
 				if (data?.code !== 200 || !data?.data) {
@@ -315,7 +309,7 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 					<Input
 						name="code"
 						onChange={(value) => {
-							setFormData({...formData, code: value})
+							setFormData({ ...formData, code: value })
 						}}
 					/>
 					<InputGroup.Button
@@ -361,7 +355,7 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 						立即注册
 					</Button>
 					<div style={{ flex: 1 }}></div>
-					<Button onClick={() => switchTo(0) }>已经有账号，登陆</Button>
+					<Button onClick={() => switchTo(0)}>已经有账号，登录</Button>
 				</ButtonToolbar>
 			</Form.Group>
 		</Form>
@@ -375,16 +369,16 @@ const initialValue = {
 	confirm_password: '',
 }
 
-const RetrievePanel = ({switchTo} : PanelProps) => {
+const RetrievePanel = ({ switchTo }: PanelProps) => {
 	const [formValue, setFormValue] = useState<any>(initialValue);
-	const [{loading}, executeRetrieve] = useAxios({
+	const [{ loading }, executeRetrieve] = useAxios({
 		url: '/api/auth/forgot',
 		method: 'post'
-	}, {manual: true})
+	}, { manual: true })
 	const [, executeGetCode] = useAxios({
 		url: '/api/auth/send',
 		method: 'post'
-	}, {manual: true})
+	}, { manual: true })
 	const [seconds, setSeconds] = useState(0)
 	const intervalRef = useRef<any>(null)
 
@@ -414,8 +408,8 @@ const RetrievePanel = ({switchTo} : PanelProps) => {
 
 		startCountDown()
 
-		executeGetCode({data: { email, type: 1 }})
-			.then(({data}) => {
+		executeGetCode({ data: { email, type: 1 } })
+			.then(({ data }) => {
 				// console.log(res)
 				if (data.code === 200) {
 					toaster.push(<Message>验证码已发送</Message>);
@@ -445,23 +439,25 @@ const RetrievePanel = ({switchTo} : PanelProps) => {
 			return
 		}
 
-		executeRetrieve({ data: {
-			email,
-			code,
-			password
-		}})
-		.then(({data}) => {
-			console.log(data)
-			if (data.code === 200) {
-				toaster.push(<Message>改密成功</Message>);
-				switchTo(0)
-			} else {
-				toaster.push(<Message type="error">{data?.msg || '修改密码失败，请稍后重试！'}</Message>);
+		executeRetrieve({
+			data: {
+				email,
+				code,
+				password
 			}
 		})
-		.catch((err: any) => {
-			toaster.push(<Message type="error">{err.toString()}</Message>)
-		})
+			.then(({ data }) => {
+				console.log(data)
+				if (data.code === 200) {
+					toaster.push(<Message>改密成功</Message>);
+					switchTo(0)
+				} else {
+					toaster.push(<Message type="error">{data?.msg || '修改密码失败，请稍后重试！'}</Message>);
+				}
+			})
+			.catch((err: any) => {
+				toaster.push(<Message type="error">{err.toString()}</Message>)
+			})
 	}
 
 	return (
@@ -483,7 +479,7 @@ const RetrievePanel = ({switchTo} : PanelProps) => {
 					<Input
 						name="code"
 						onChange={(value) => {
-							setFormValue({...formValue, code: value})
+							setFormValue({ ...formValue, code: value })
 						}}
 					/>
 					<InputGroup.Button
@@ -522,14 +518,14 @@ const RetrievePanel = ({switchTo} : PanelProps) => {
 						重置密码
 					</Button>
 					<div style={{ flex: 1 }}></div>
-					<Button onClick={() => switchTo(0) }>想起来了</Button>
+					<Button onClick={() => switchTo(0)}>返回，登录账号</Button>
 				</ButtonToolbar>
 			</Form.Group>
 		</Form>
 	)
 }
 
-const panels : Record<number, (props: any) => JSX.Element> = {
+const panels: Record<number, (props: any) => JSX.Element> = {
 	0: LoginPanel,
 	1: RegisterPanel,
 	2: RetrievePanel,
@@ -624,7 +620,7 @@ export default function AppHead() {
 						<h3>登陆全能搜题开放平台</h3>
 						<p style={{ marginTop: 5, marginBottom: 45 }}>登陆后可以上传题库，添加题目，调用搜题接口</p>
 
-						{  <Panel switchTo={setCurrentPanel} setloginDrawer={setloginDrawer} /> }
+						{<Panel switchTo={setCurrentPanel} setloginDrawer={setloginDrawer} />}
 					</div>
 				</Drawer.Body>
 			</Drawer>
