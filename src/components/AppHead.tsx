@@ -88,7 +88,10 @@ const LoginPanel = ({ switchTo, setloginDrawer }: PanelProps) => {
 	return (
 		<Form
 			onChange={(data: any) => {
-				setFormData(data)
+				setFormData({
+					...formData,
+					...data
+				})
 			}}
 			fluid
 		>
@@ -289,7 +292,7 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 		<Form
 			formValue={formData}
 			onChange={(data) => {
-				setFormData(data)
+				setFormData({ ...formData, ...data })
 			}}
 			fluid
 		>
@@ -349,7 +352,7 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 								formData?.password,
 								formData?.confirm_password,
 							);
-							// console.log('注册数据', registerConfig);
+							// console.log('注册数据', formData);
 						}}
 					>
 						立即注册
@@ -463,14 +466,20 @@ const RetrievePanel = ({ switchTo }: PanelProps) => {
 	return (
 		<Form
 			formValue={formValue}
-			onChange={(formValue) => {
-				setFormValue(formValue)
+			onChange={(values) => {
+				setFormValue({ ...formValue, ...values })
 			}}
 			fluid
 		>
 			<Form.Group>
 				<Form.ControlLabel>邮箱地址</Form.ControlLabel>
-				<Form.Control name="email" type="email" autoComplete="off" />
+				<Form.Control
+					name="email"
+					type="email"
+					autoComplete="off"
+					onChange={(value: any) => {
+						setFormValue({ ...formValue, email: value })
+					}} />
 			</Form.Group>
 
 			<Form.Group>
@@ -478,7 +487,7 @@ const RetrievePanel = ({ switchTo }: PanelProps) => {
 				<InputGroup inside style={{ width: '100%' }}>
 					<Input
 						name="code"
-						onChange={(value) => {
+						onChange={(value: any) => {
 							setFormValue({ ...formValue, code: value })
 						}}
 					/>
@@ -498,12 +507,16 @@ const RetrievePanel = ({ switchTo }: PanelProps) => {
 
 			<Form.Group>
 				<Form.ControlLabel>密码</Form.ControlLabel>
-				<Form.Control name="password" type="password" autoComplete="off" />
+				<Form.Control name="password" type="password" autoComplete="off" onChange={(value: any) => {
+					setFormValue({ ...formValue, password: value })
+				}} />
 			</Form.Group>
 
 			<Form.Group>
 				<Form.ControlLabel>确认密码</Form.ControlLabel>
-				<Form.Control name="confirm_password" type="password" autoComplete="off" />
+				<Form.Control name="confirm_password" type="password" autoComplete="off" onChange={(value: any) => {
+					setFormValue({ ...formValue, confirm_password: value })
+				}} />
 			</Form.Group>
 
 			<Form.Group>
