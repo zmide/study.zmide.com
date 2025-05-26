@@ -229,7 +229,8 @@ const RegisterPanel = ({ switchTo }: PanelProps) => {
 					setgetCodeConfig({
 						netLoading: false,
 					});
-					setFormData({})
+					// fix：注册用户时获取验证码后表单数据被清空的问题
+					//setFormData({})
 				}
 			})
 			.catch((error: any) => {
